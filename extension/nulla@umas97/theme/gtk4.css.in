@@ -4,6 +4,8 @@
  * Modello: extension/nulla@umas97/theme/gtk4.css.in
  *
  * L'accento NON è definito qui: resta quello scelto in Impostazioni → Aspetto.
+ * Il file contiene la variante chiara e, dentro @media (prefers-color-scheme: dark),
+ * quella scura: le app libadwaita cambiano insieme al sistema senza riaprirle.
  */
 
 /* ───────────── Palette: solo variabili, nessun selettore invasivo ───────────── */
@@ -13,37 +15,37 @@
 
   /* Sfondo della finestra (e quindi delle barre del titolo "piatte"):
      semi-trasparente secondo lo slider. */
-  --window-bg-color: rgb(22 22 25 / {{a_gtkWindow}});
-  --window-fg-color: rgb(255 255 255 / 92%);
+  --window-bg-color: rgba({{window}}, {{a_gtkWindow}});
+  --window-fg-color: {{text:0.92}};
 
   /* Barre del titolo "rialzate" e app GTK4 senza libadwaita */
-  --headerbar-bg-color: rgb(22 22 25 / {{a_gtkWindow}});
-  --headerbar-backdrop-color: rgb(22 22 25 / {{a_gtkWindow}});
-  --headerbar-shade-color: rgb(0 0 0 / 18%);
-  --headerbar-darker-shade-color: rgb(0 0 0 / 30%);
+  --headerbar-bg-color: rgba({{window}}, {{a_gtkWindow}});
+  --headerbar-backdrop-color: rgba({{window}}, {{a_gtkWindow}});
+  --headerbar-shade-color: {{shade:0.18}};
+  --headerbar-darker-shade-color: {{shade:0.30}};
 
   /* Sidebar: una velatura leggerissima sopra lo sfondo trasparente */
-  --sidebar-bg-color: rgb(255 255 255 / 3%);
-  --sidebar-backdrop-color: rgb(255 255 255 / 2%);
-  --sidebar-border-color: rgb(255 255 255 / 5%);
-  --sidebar-shade-color: rgb(0 0 0 / 15%);
-  --secondary-sidebar-bg-color: rgb(255 255 255 / 2%);
-  --secondary-sidebar-backdrop-color: rgb(255 255 255 / 1%);
-  --secondary-sidebar-border-color: rgb(255 255 255 / 5%);
+  --sidebar-bg-color: {{ink:0.03}};
+  --sidebar-backdrop-color: {{ink:0.02}};
+  --sidebar-border-color: {{ink:0.05}};
+  --sidebar-shade-color: {{shade:0.15}};
+  --secondary-sidebar-bg-color: {{ink:0.02}};
+  --secondary-sidebar-backdrop-color: {{ink:0.01}};
+  --secondary-sidebar-border-color: {{ink:0.05}};
 
   /* Contenuto: liste, testo, griglie di file restano leggibili (quasi opachi) */
-  --view-bg-color: rgb(18 18 21 / {{a_gtkContent}});
-  --card-bg-color: rgb(34 34 38 / {{a_gtkCard}});
-  --card-shade-color: rgb(0 0 0 / 20%);
-  --thumbnail-bg-color: rgb(34 34 38);
+  --view-bg-color: rgba({{view}}, {{a_gtkContent}});
+  --card-bg-color: rgba({{card}}, {{a_gtkCard}});
+  --card-shade-color: {{shade:0.20}};
+  --thumbnail-bg-color: rgb({{card}});
 
   /* Elementi flottanti */
-  --dialog-bg-color: rgb(28 28 31 / {{a_gtkPopover}});
-  --popover-bg-color: rgb(30 30 34 / {{a_gtkPopover}});
-  --popover-shade-color: rgb(0 0 0 / 25%);
+  --dialog-bg-color: rgba({{dialog}}, {{a_gtkPopover}});
+  --popover-bg-color: rgba({{popover}}, {{a_gtkPopover}});
+  --popover-shade-color: {{shade:0.25}};
 
-  --shade-color: rgb(0 0 0 / 20%);
-  --overview-bg-color: rgb(18 18 21);
+  --shade-color: {{shade:0.20}};
+  --overview-bg-color: rgb({{overview}});
 }
 
 /* Contenuto opaco, barre trasparenti.
@@ -52,7 +54,7 @@
    barre resta visibile lo sfondo semi-trasparente della finestra. */
 toolbarview > :first-child,
 .content-pane {
-  background-color: rgb(18 18 21 / {{a_gtkContent}});
+  background-color: rgba({{view}}, {{a_gtkContent}});
 }
 
 /* …tranne dentro la sidebar, che resta velata… */
@@ -125,7 +127,7 @@ windowcontrols > button.maximize > image { background-color: #28c840; }
 windowcontrols > button.close:backdrop > image,
 windowcontrols > button.minimize:backdrop > image,
 windowcontrols > button.maximize:backdrop > image {
-  background-color: rgb(255 255 255 / 16%);
+  background-color: {{button_idle:0.16}};
   box-shadow: none;
 }
 

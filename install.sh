@@ -22,7 +22,7 @@ BACKUP="$DATA_HOME/nulla/backup-originale"
 IMPORT_LINE='@import url("nulla.css");'
 
 for cmd in gsettings dconf glib-compile-schemas gjs python3; do
-    command -v "$cmd" >/dev/null || { warn "Comando mancante: $cmd"; exit 1; }
+    command -v "$cmd" >/dev/null || { warn "Missing command: %s" "$cmd"; exit 1; }
 done
 
 # Cartella "schemas" di un'estensione installata (vuota se usa gli schemi di sistema).
@@ -37,13 +37,13 @@ ext_schemadir() {
 gset() {
     local dir="$1"; shift
     local args=(); [[ -n "$dir" ]] && args=(--schemadir "$dir")
-    gsettings "${args[@]}" set "$@" 2>/dev/null || warn "Saltato: $* (schema o chiave assente)"
+    gsettings "${args[@]}" set "$@" 2>/dev/null || warn "Skipped: %s (schema or key missing)" "$*"
 }
 
 # ───────────── 1. Backup delle impostazioni originali (solo la prima volta) ─────────────
 
 if [[ ! -d "$BACKUP" ]]; then
-    say "Backup delle impostazioni originali in $BACKUP"
+    say "Backing up the original settings to %s" "$BACKUP"
     mkdir -p "$BACKUP"
     {
         echo '#!/usr/bin/env bash'
@@ -69,20 +69,21 @@ if [[ ! -d "$BACKUP" ]]; then
         [[ -f "$CONFIG_HOME/$v/gtk.css" ]] && cp "$CONFIG_HOME/$v/gtk.css" "$BACKUP/$v-gtk.css"
     done
 else
-    say "Backup originale già presente: lo conservo ($BACKUP)"
+    say "Original backup already present, keeping it (%s)" "$BACKUP"
 fi
 
 # ───────────── 2. Estensione ─────────────
 
-say "Copio l'estensione in $DEST"
+say "Copying the extension to %s" "$DEST"
 rm -rf "$DEST"
 mkdir -p "$(dirname "$DEST")"
 cp -r "$SRC" "$DEST"
 glib-compile-schemas "$DEST/schemas"
+python3 -I "$REPO/tools/i18n.py" compile "$DEST/locale"
 
 # ───────────── 3. App GTK ─────────────
 
-say "Collego il tema alle app GTK3 e GTK4"
+say "Linking the theme to GTK 3 and GTK 4 apps"
 for v in gtk-4.0 gtk-3.0; do
     css="$CONFIG_HOME/$v/gtk.css"
     mkdir -p "$(dirname "$css")"
@@ -96,30 +97,30 @@ gjs -m "$REPO/tools/render-gtk.js" "$DEST"
 
 # ───────────── 4. Impostazioni di GNOME e delle estensioni ─────────────
 
-say "Imposto schema scuro e pulsanti stile macOS a destra (− + ×)"
-gset "" org.gnome.desktop.interface color-scheme "'prefer-dark'"
+# Chiaro o scuro segue Impostazioni → Aspetto: lo schema colori non viene toccato.
+say "Setting macOS-style window buttons on the right (− + ×)"
 gset "" org.gnome.desktop.wm.preferences button-layout "':minimize,maximize,close'"
 
 BLUR_DIR="$(ext_schemadir blur-my-shell@aunetx)"
 if [[ -n "$BLUR_DIR" ]]; then
-    say "Blur my Shell: sfocatura attiva, tinta gestita da Nulla"
+    say "Blur my Shell: blur on, tint handled by Nulla"
     for part in panel popup dash-to-dock; do
         gset "$BLUR_DIR" "org.gnome.shell.extensions.blur-my-shell.$part" override-background false
     done
     gset "$BLUR_DIR" org.gnome.shell.extensions.blur-my-shell.popup blur true
 else
-    warn "Blur my Shell non trovata: niente sfocatura (il tema funziona comunque)"
+    warn "Blur my Shell not found: no blur (the theme works anyway)"
 fi
 
 DOCK_DIR="$(ext_schemadir dash-to-dock@micxgx.gmail.com)"
-say "Dock: trasparenza gestita dal tema"
+say "Dock: transparency handled by the theme"
 gset "$DOCK_DIR" org.gnome.shell.extensions.dash-to-dock transparency-mode "'DEFAULT'"
 gset "$DOCK_DIR" org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
 gset "$DOCK_DIR" org.gnome.shell.extensions.dash-to-dock custom-background-color false
 
 # ───────────── 5. Attivazione ─────────────
 
-say "Attivo l'estensione e disattivo la dock (le app passano nella barra superiore)"
+say "Enabling the extension and turning off the dock (apps move to the top bar)"
 gsettings set org.gnome.shell disable-user-extensions false
 mkdir -p "$DATA_HOME/nulla"
 python3 -I - "$UUID" "$DATA_HOME/nulla/riattiva-estensioni" <<'PY'
@@ -154,8 +155,8 @@ gnome-extensions disable dash-to-dock@micxgx.gmail.com 2>/dev/null || true
 gnome-extensions enable "$UUID" 2>/dev/null || true
 
 echo
-say "Fatto."
-echo "  • Esci e rientra (logout/login) per attivare il tema della shell e lo slider."
-echo "  • Le app GTK già aperte vanno riaperte."
-echo "  • Accento: Impostazioni → Aspetto.  Trasparenza: impostazioni rapide (in alto a destra)."
-echo "  • Disinstallazione: ./uninstall.sh"
+say "Done."
+note "• Log out and back in to activate the shell theme and the slider."
+note "• GTK apps that are already open must be reopened."
+note "• Accent and light/dark: Settings → Appearance.  Transparency: Quick Settings (top right)."
+note "• Uninstall: ./uninstall.sh"

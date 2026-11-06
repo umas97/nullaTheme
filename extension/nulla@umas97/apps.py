@@ -56,14 +56,18 @@ def running(name):
 
 
 # ───────────── VS Code ─────────────
-# Tema colori generato dall'estensione, barra del titolo di GNOME (i pulsanti
-# disegnati da VS Code non si possono restilizzare) e menu di VS Code, così menu e
-# ricerca stanno nella stessa barra.
+# Temi colori generati dall'estensione (scuro e chiaro, scelto in automatico come
+# il sistema), barra del titolo di GNOME (i pulsanti disegnati da VS Code non si
+# possono restilizzare) e menu di VS Code, così menu e ricerca stanno nella
+# stessa barra.
 
 VSCODE_SETTINGS = os.path.join(CONFIG, 'Code', 'User', 'settings.json')
 VSCODE_THEME_DIR = os.path.join(HOME, '.vscode', 'extensions', 'nulla.nulla-theme-1.0.0')
 VSCODE_VALUES = {
     'workbench.colorTheme': 'Nulla',
+    'window.autoDetectColorScheme': True,
+    'workbench.preferredDarkColorTheme': 'Nulla',
+    'workbench.preferredLightColorTheme': 'Nulla Light',
     'window.titleBarStyle': 'native',
     'window.menuStyle': 'custom',
 }
@@ -79,9 +83,13 @@ def vscode(action):
     record = record_path('vscode')
 
     if action == 'apply':
-        if not os.path.exists(record):
+        # Si annota il valore di ogni chiave prima che Nulla la tocchi la prima
+        # volta (anche le chiavi aggiunte in versioni successive).
+        old = load(record) if os.path.exists(record) else {}
+        new = {k: data.get(k, MISSING) for k in VSCODE_VALUES if k not in old}
+        if new:
             os.makedirs(RECORDS, exist_ok=True)
-            save(record, {k: data.get(k, MISSING) for k in VSCODE_VALUES})
+            save(record, {**old, **new})
         if any(data.get(k) != v for k, v in VSCODE_VALUES.items()):
             data.update(VSCODE_VALUES)
             os.makedirs(os.path.dirname(VSCODE_SETTINGS), exist_ok=True)

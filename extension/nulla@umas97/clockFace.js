@@ -11,25 +11,42 @@ import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import St from 'gi://St';
 
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+
 /**
  * time:     mostra ore:minuti in grande
  * stacked:  ore sopra, minuti sotto
  * weekday:  giorno della settimana in evidenza (prima riga)
- * date:     formato strftime della riga della data
+ * date:     formato della riga della data (vedi dateFormat)
  * withTime: 'before' | 'after' — l'ora va nella riga della data
  * upper:    data in maiuscolo; tracking: lettere spaziate (spazi sottili Unicode)
  * analog:   quadrante disegnato
  */
 const CLOCK_PRESETS = {
-    classic: {time: true, date: '%A %e %B'},
-    thin: {time: true, date: '%A %e %B', upper: true, tracking: true},
-    bold: {time: true, date: '%a %e %b'},
-    stacked: {time: true, stacked: true, date: '%A %e %B'},
-    accent: {time: true, date: '%A %e %B'},
-    elegant: {weekday: true, date: '%e %B', withTime: 'after'},
-    pill: {date: '%a %e %b', withTime: 'before'},
-    analog: {analog: true, date: '%a %e %b'},
+    classic: {time: true, date: 'long'},
+    thin: {time: true, date: 'long', upper: true, tracking: true},
+    bold: {time: true, date: 'short'},
+    stacked: {time: true, stacked: true, date: 'long'},
+    accent: {time: true, date: 'long'},
+    elegant: {weekday: true, date: 'dayMonth', withTime: 'after'},
+    pill: {date: 'short', withTime: 'before'},
+    analog: {analog: true, date: 'short'},
 };
+
+/** Formati strftime delle date: l'ordine di giorno e mese dipende dalla lingua. */
+function dateFormat(kind) {
+    switch (kind) {
+    case 'short':
+        // Translators: short date under the clock, strftime format (e.g. "Fri, Nov 6")
+        return _('%a, %b %e');
+    case 'dayMonth':
+        // Translators: day and month without weekday, strftime format (e.g. "November 6")
+        return _('%B %e');
+    default:
+        // Translators: long date under the clock, strftime format (e.g. "Friday, November 6")
+        return _('%A, %B %e');
+    }
+}
 
 const ALIGN = {
     left: Clutter.ActorAlign.START,
@@ -145,7 +162,7 @@ export class ClockFace {
         this._minutes.text = minutes;
         this._weekday.text = capitalize(now.format('%A'));
 
-        let date = now.format(preset.date).replace(/\s+/g, ' ').trim();
+        let date = now.format(dateFormat(preset.date)).replace(/\s+/g, ' ').replace(/ ,/g, ',').trim();
         if (preset.upper)
             date = date.toLocaleUpperCase();
         if (preset.withTime === 'before')

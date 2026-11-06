@@ -1,14 +1,15 @@
 {
   "name": "nulla-theme",
   "displayName": "Nulla",
-  "description": "Tema scuro minimal abbinato al tema GNOME Nulla; l'accento segue Impostazioni → Aspetto.",
+  "description": "Minimal light and dark themes matching the Nulla GNOME theme; the accent follows Settings → Appearance.",
   "version": "1.0.0",
   "publisher": "nulla",
   "engines": { "vscode": "^1.70.0" },
   "categories": ["Themes"],
   "contributes": {
     "themes": [
-      { "label": "Nulla", "uiTheme": "vs-dark", "path": "./themes/nulla-color-theme.json" }
+      { "label": "Nulla", "uiTheme": "vs-dark", "path": "./themes/nulla-color-theme.json" },
+      { "label": "Nulla Light", "uiTheme": "vs", "path": "./themes/nulla-light-color-theme.json" }
     ]
   }
 }

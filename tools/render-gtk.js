@@ -24,16 +24,15 @@ const settings = new Gio.Settings({
     settings_schema: source.lookup('org.gnome.shell.extensions.nulla', false),
 });
 
+const iface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
+const dark = iface.get_string('color-scheme') === 'prefer-dark';
 const appTransparency = settings.get_boolean('app-transparency-enabled')
     ? settings.get_int('app-transparency') : 0;
-const tokens = computeTokens(settings.get_int('transparency'), settings.get_int('radius'),
-    settings.get_int('panel-height'), appTransparency);
-writeGtkFiles(extDir, tokens, settings.get_boolean('apply-gtk'));
-print(`Nulla: CSS GTK generato (trasparenza finestre ${appTransparency}, raggio ${tokens.r}px)`);
+const tokensFor = variant => computeTokens(settings.get_int('transparency'), settings.get_int('radius'),
+    settings.get_int('panel-height'), appTransparency, settings.get_int('clock-size'), variant);
+writeGtkFiles(extDir, tokensFor, dark, settings.get_boolean('apply-gtk'));
 
 if (settings.get_boolean('apply-vscode')) {
-    const accentName = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'}).get_string('accent-color');
-    const accent = GNOME_ACCENTS[accentName] ?? GNOME_ACCENTS.blue;
-    if (writeVscodeTheme(extDir, accent))
-        print(`Nulla: tema VS Code generato (accento ${accentName} ${accent})`);
+    const accent = GNOME_ACCENTS[iface.get_string('accent-color')] ?? GNOME_ACCENTS.blue;
+    writeVscodeTheme(extDir, accent);
 }

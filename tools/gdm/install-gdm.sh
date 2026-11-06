@@ -19,19 +19,19 @@ LINK=/usr/share/gnome-shell/gdm-theme.gresource
 NAME=gdm-theme.gresource
 
 if [[ $EUID -eq 0 ]]; then
-    echo "Lancialo come utente normale (senza sudo): serve leggere sfondo e accento." >&2
+    warn "Run it as your normal user (without sudo): it needs to read your wallpaper and accent."
     exit 1
 fi
 
 "$REPO/tools/gdm/build-gdm-theme.sh" "$BUILD"
 
-say "Installo il tema (richiede la password di amministratore)"
+say "Installing the theme (needs the administrator password)"
 sudo install -D -m 644 "$BUILD/gnome-shell-theme.gresource" "$DEST"
 sudo update-alternatives --install "$LINK" "$NAME" "$DEST" 50
 sudo update-alternatives --set "$NAME" "$DEST"
 
 echo
-say "Fatto. La nuova schermata di accesso si vede al prossimo logout o riavvio."
-echo "  • Per tornare a quella di Ubuntu: tools/gdm/uninstall-gdm.sh"
-echo "  • Se qualcosa andasse storto e non riuscissi ad accedere: Ctrl+Alt+F3,"
-echo "    accedi dal terminale e lancia: sudo update-alternatives --auto $NAME"
+say "Done. The new login screen appears at the next logout or reboot."
+note "• To go back to Ubuntu's: tools/gdm/uninstall-gdm.sh"
+note "• If something goes wrong and you can't log in: Ctrl+Alt+F3,"
+note "  log in from the console and run: sudo update-alternatives --auto %s" "$NAME"

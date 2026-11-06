@@ -1,4 +1,4 @@
-"""Finestra demo libadwaita per l'anteprima: sidebar + contenuto, come Impostazioni."""
+"""Demo libadwaita window for the preview: sidebar + content, like Settings."""
 import gi
 
 gi.require_version('Gtk', '4.0')
@@ -12,17 +12,17 @@ def sidebar():
     lst = Gtk.ListBox(css_classes=['navigation-sidebar'])
     for icon, label in [('network-wireless-symbolic', 'Wi-Fi'),
                         ('bluetooth-symbolic', 'Bluetooth'),
-                        ('preferences-desktop-appearance-symbolic', 'Aspetto'),
-                        ('preferences-system-notifications-symbolic', 'Notifiche'),
-                        ('system-search-symbolic', 'Ricerca'),
-                        ('folder-symbolic', 'File')]:
+                        ('preferences-desktop-appearance-symbolic', 'Appearance'),
+                        ('preferences-system-notifications-symbolic', 'Notifications'),
+                        ('system-search-symbolic', 'Search'),
+                        ('folder-symbolic', 'Files')]:
         row = Gtk.Box(spacing=12, margin_start=6, margin_top=6, margin_bottom=6)
         row.append(Gtk.Image(icon_name=icon))
         row.append(Gtk.Label(label=label))
         lst.append(row)
     lst.select_row(lst.get_row_at_index(2))
     view.set_content(Gtk.ScrolledWindow(child=lst, vexpand=True))
-    return Adw.NavigationPage(title='Impostazioni', child=view)
+    return Adw.NavigationPage(title='Settings', child=view)
 
 
 def content():
@@ -32,22 +32,22 @@ def content():
     view.add_top_bar(header)
 
     page = Adw.PreferencesPage()
-    group = Adw.PreferencesGroup(title='Aspetto', description='Tema Nulla, accento di sistema')
-    group.add(Adw.SwitchRow(title='Trasparenze', subtitle='Regolabili dalle impostazioni rapide', active=True))
-    group.add(Adw.ActionRow(title='Raggio degli angoli', subtitle='12 px'))
-    group.add(Adw.EntryRow(title='Nome del tema', text='Nulla'))
+    group = Adw.PreferencesGroup(title='Appearance', description='Nulla theme, system accent')
+    group.add(Adw.SwitchRow(title='Transparency', subtitle='Adjustable from Quick Settings', active=True))
+    group.add(Adw.ActionRow(title='Corner radius', subtitle='12 px'))
+    group.add(Adw.EntryRow(title='Theme name', text='Nulla'))
     page.add(group)
 
-    group2 = Adw.PreferencesGroup(title='Azioni')
+    group2 = Adw.PreferencesGroup(title='Actions')
     box = Gtk.Box(spacing=12)
-    box.append(Gtk.Button(label='Applica', css_classes=['suggested-action', 'pill']))
-    box.append(Gtk.Button(label='Annulla', css_classes=['pill']))
-    box.append(Gtk.CheckButton(label='Opzione', active=True))
+    box.append(Gtk.Button(label='Apply', css_classes=['suggested-action', 'pill']))
+    box.append(Gtk.Button(label='Cancel', css_classes=['pill']))
+    box.append(Gtk.CheckButton(label='Option', active=True))
     group2.add(box)
     page.add(group2)
 
     view.set_content(page)
-    return Adw.NavigationPage(title='Aspetto', child=view)
+    return Adw.NavigationPage(title='Appearance', child=view)
 
 
 def on_activate(app):

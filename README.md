@@ -1,20 +1,25 @@
 # Nulla
 
-**A minimal dark theme for GNOME Shell and GTK apps**: glass surfaces with adjustable
-transparency, GNOME's native accent color, macOS-style window buttons and a floating
-pill-shaped top bar that replaces the dock.
+**A minimal light and dark theme for GNOME Shell and GTK apps**: glass surfaces with
+adjustable transparency, GNOME's native accent color, macOS-style window buttons and a
+floating pill-shaped top bar that replaces the dock.
 
-![Desktop with Nulla](docs/screenshots/desktop.png)
+| Dark | Light |
+|---|---|
+| ![Nulla, dark](docs/screenshots/desktop.png) | ![Nulla, light](docs/screenshots/desktop-light.png) |
 
 > Built and tested on **Ubuntu 26.04 / GNOME 50 (Wayland)** on top of the default Yaru
-> theme. The extension declares GNOME 48–50. The preferences window and the shell
-> labels it adds are currently in Italian.
+> theme. The extension declares GNOME 48–50. Available in English and Italian, more
+> languages welcome (see [Translations](#translations)).
 
 ## Features
 
 - **Adjustable transparency**: a slider in Quick Settings (under brightness) changes
   how much glass the shell shows. App windows get their own separate amount and on/off
   switch: only title bars and sidebars become translucent, the content stays opaque.
+- **Light and dark**: follows *Settings → Appearance → Style*. Shell, GTK 4 apps and
+  VS Code switch together; libadwaita apps change instantly, without reopening. The
+  lock and login screens stay dark, on top of the blurred wallpaper.
 - **Native accent**: pick it in *Settings → Appearance* and the shell, GTK apps and
   VS Code follow it.
 - **macOS-style window buttons** on the right, in the order − + ×: clean
@@ -34,15 +39,18 @@ pill-shaped top bar that replaces the dock.
   under it.
 - **Lock screen and login screen** in the same style: blurred wallpaper, the same
   clock, a small avatar and a pill-shaped password field.
-- **VS Code and Chrome** (optional, one switch each): VS Code gets a "Nulla" color theme
-  that follows the accent and uses the GNOME title bar; Chrome switches to its GTK
-  theme. Either way the window buttons match the rest of the desktop.
+- **VS Code and Chrome** (optional, one switch each): VS Code gets "Nulla" and
+  "Nulla Light" color themes that follow the accent and the system style, and uses the
+  GNOME title bar; Chrome switches to its GTK theme. Either way the window buttons
+  match the rest of the desktop.
+- **Translated**: preferences, shell labels and install scripts follow the system
+  language, with English as the fallback.
 - **Blur my Shell** integration: blur behind the bar and menus, with corner
   radii that match the theme.
 
-| Quick Settings | Calendar and notifications |
+| Quick Settings (dark) | Calendar and notifications (light) |
 |---|---|
-| ![Quick Settings](docs/screenshots/quick-settings.png) | ![Calendar](docs/screenshots/calendar.png) |
+| ![Quick Settings](docs/screenshots/quick-settings.png) | ![Calendar](docs/screenshots/calendar-light.png) |
 
 | Overview | Preferences |
 |---|---|
@@ -76,7 +84,8 @@ What it changes:
 
 - copies the extension to `~/.local/share/gnome-shell/extensions/nulla@umas97`;
 - adds `@import url("nulla.css");` to `~/.config/gtk-3.0/gtk.css` and `~/.config/gtk-4.0/gtk.css`;
-- sets the dark color scheme and the window button layout `:minimize,maximize,close`;
+- sets the window button layout `:minimize,maximize,close` (light or dark is left to
+  *Settings → Appearance*);
 - configures Blur my Shell (no tint of its own) and turns off Dash to Dock / Ubuntu Dock.
 
 ### Login screen (optional)
@@ -101,10 +110,10 @@ alternative with `update-alternatives`. If anything goes wrong, switch to a text
 | What | Where |
 |---|---|
 | Shell transparency | Quick Settings (top right) → ◐ slider |
-| App window transparency | *Extensions* → Nulla → ⚙ → *Finestre delle app* |
-| Accent color | Settings → Appearance |
+| App window transparency | *Extensions* → Nulla → ⚙ → *App windows* |
+| Accent color, light or dark | Settings → Appearance |
 | Corner radius, bar height, clock style and position, every feature on/off | *Extensions* → Nulla → ⚙ |
-| VS Code / Chrome theming | *Extensions* → Nulla → ⚙ → *Integrazioni* |
+| VS Code / Chrome theming | *Extensions* → Nulla → ⚙ → *Integrations* |
 | Apps in the bar | click = open / focus / minimize · middle click = new window · right click = menu · drag = reorder (drag from the app grid to add) |
 | Quick Settings toggles | right click = toggle menu · ✎ = edit mode |
 
@@ -113,10 +122,12 @@ alternative with `update-alternatives`. If anything goes wrong, switch to a text
 Both switches are on by default and are applied by the extension at login. Turning one
 off puts back the settings that were there before.
 
-- **VS Code** sets `workbench.colorTheme`, `window.titleBarStyle: native` (the window
-  buttons are drawn by GNOME, since VS Code's own buttons cannot be restyled) and
-  `window.menuStyle: custom` (menu and search share one bar). Restart VS Code to see it.
-  If `settings.json` contains comments it is left alone.
+- **VS Code** sets the "Nulla" / "Nulla Light" themes with
+  `window.autoDetectColorScheme` (they switch with the system),
+  `window.titleBarStyle: native` (the window buttons are drawn by GNOME, since VS Code's
+  own buttons cannot be restyled) and `window.menuStyle: custom` (menu and search share
+  one bar). Restart VS Code to see it. If `settings.json` contains comments it is left
+  alone.
 - **Chrome** is switched to its GTK theme. Chrome rewrites its preferences when it
   quits, so the change waits until Chrome is closed. If Chrome Sync brings back a
   colored theme, the extension applies GTK again at the next login; you can also pick
@@ -138,19 +149,22 @@ layout, color scheme). Log out and back in to finish.
   `shell.css.in`, compiled with the current settings. Its rules win over Yaru without
   replacing it, so disabling the extension instantly brings back the system theme.
 - **GTK 4 / libadwaita**: `gtk.css` imports `nulla.css`, which redefines libadwaita's
-  color variables. The window background is translucent, while the content
-  (`toolbarview > :first-child`, `.content-pane`) has its own nearly opaque background,
-  so only title bars and sidebars let the wallpaper through.
+  color variables: the light palette first, the dark one inside
+  `@media (prefers-color-scheme: dark)`. The window background is translucent, while
+  the content (`toolbarview > :first-child`, `.content-pane`) has its own nearly opaque
+  background, so only title bars and sidebars let the wallpaper through.
 - **GTK 3**: only the window buttons change; colors stay Yaru's, which follows the
   system accent anyway.
 - **Transparency**: every surface has a weight `k` in `tokens.js`; with the slider at
   `t`, its opacity is `1 − k·t`. Changing the weights changes the character of the
   whole theme.
+- **Light and dark**: the templates use color placeholders (`{{surface}}`,
+  `{{text:0.92}}`, …) filled from the two palettes in `tokens.js`.
 
 ```
 extension/nulla@umas97/
 ├── extension.js      entry point: shell CSS, slider, Blur my Shell, apps, features
-├── tokens.js         settings → CSS values (transparency weights, radii, sizes)
+├── tokens.js         settings → CSS values (palettes, transparency weights, radii, sizes)
 ├── files.js          writes the GTK CSS and the VS Code theme (also used by tools/)
 ├── apps.py           applies / restores VS Code and Chrome settings
 ├── quickToggles.js   round icon-only Quick Settings toggles
@@ -168,15 +182,17 @@ extension/nulla@umas97/
     ├── gdm.css.in    login screen only
     ├── gtk4.css.in   GTK 4 / libadwaita
     ├── gtk3.css.in   GTK 3 window buttons
-    ├── vscode/       VS Code color theme template
+    ├── vscode/       VS Code color theme templates (dark and light)
     └── assets/       × − + symbols for the window buttons
+po/                   translations (see po/README.md)
 tools/
-├── common.sh         shared shell helpers
+├── common.sh         shared shell helpers (paths, translated messages)
+├── i18n.py           extracts strings and compiles translations
 ├── render-gtk.js     generates the GTK CSS outside the shell (used by install.sh)
 ├── render-template.js compiles a CSS template with the current settings
 ├── gdm/              login screen theme (build, install, uninstall)
 ├── preview.sh        headless preview with screenshots, see below
-└── preview/          demo windows and the test extension used by preview.sh
+└── preview/          demo windows, test extension and README screenshot builder
 ```
 
 ### Preview without logging out
@@ -189,7 +205,9 @@ NULLA_PREVIEW_WALLPAPER=docs/wallpaper.jpg tools/preview.sh     # neutral wallpa
 Starts a **headless** GNOME Shell with its own HOME, D-Bus and dconf, installs Nulla
 there with `install.sh`, opens a GTK 4 and a GTK 3 demo window and saves screenshots of
 the desktop, Quick Settings, calendar, overview, preferences and lock screen. Useful to
-try CSS changes without logging out; the screenshots in this README come from it.
+try CSS changes without logging out. `NULLA_PREVIEW_SCHEME=default` previews the light
+variant; the screenshots in this README are built with
+`tools/preview/readme-screenshots.py` (see its header).
 
 ## Known limitations
 
@@ -202,9 +220,16 @@ try CSS changes without logging out; the screenshots in this README come from it
 - **Other Snap and Electron apps** draw their own windows and are not themed (VS Code
   and Chrome are handled as described above).
 - **Apps in the bar**: dragging a running app that isn't a favorite adds it to the
-  favorites (as in the dock); remove it with right click → *Rimuovi dai preferiti*.
+  favorites (as in the dock); remove it with right click → *Unpin*.
 - **Desktop clock**: its color adapts to the wallpaper, not to windows, and it shows
   through the translucent parts of apps. With slideshow wallpapers (`.xml`) it stays light.
+
+## Translations
+
+Nulla is written in English and translated with gettext; the system language is picked
+up automatically. Italian is included. To add a language, copy `po/nulla.pot` to
+`po/<code>.po`, translate it and reinstall — no extra tools needed. Details in
+[po/README.md](po/README.md).
 
 ## License
 

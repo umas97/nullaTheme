@@ -19,8 +19,7 @@ import St from 'gi://St';
 import * as DND from 'resource:///org/gnome/shell/ui/dnd.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import {QuickMenuToggle, QuickToggle} from 'resource:///org/gnome/shell/ui/quickSettings.js';
-
-const HINT_EDIT = 'Tocca per nascondere · trascina per riordinare';
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export function isBackgroundApps(child) {
     return child.constructor.$gtype.name.includes('BackgroundApps');
@@ -230,7 +229,7 @@ export class ToggleEditor {
         });
         this._hint = new St.Label({
             style_class: 'nulla-qs-edit-hint',
-            text: HINT_EDIT,
+            text: _('Tap to hide · drag to reorder'),
             x_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
             visible: false,
@@ -240,7 +239,7 @@ export class ToggleEditor {
             style_class: 'icon-button nulla-qs-edit-button',
             child: this._editIcon,
             can_focus: true,
-            accessible_name: 'Modifica i toggle',
+            accessible_name: _('Edit toggles'),
             x_expand: true,                 // prende lo spazio libero…
             x_align: Clutter.ActorAlign.END, // …e si allinea a destra
         });
@@ -260,13 +259,13 @@ export class ToggleEditor {
 
         this._hint.visible = editing;
         this._editIcon.icon_name = editing ? 'object-select-symbolic' : 'document-edit-symbolic';
-        this._editButton.accessible_name = editing ? 'Fine' : 'Modifica i toggle';
+        this._editButton.accessible_name = editing ? _('Done') : _('Edit toggles');
 
         if (editing) {
             this._grid.add_style_class_name('nulla-qs-editing');
             this._header = new St.Label({
                 style_class: 'nulla-qs-hidden-header',
-                text: 'Nascosti · tocca per aggiungere',
+                text: _('Hidden · tap to add'),
                 x_expand: true,
             });
             this._menu.addItem(this._header, this._grid.layout_manager.nColumns);

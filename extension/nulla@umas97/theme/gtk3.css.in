@@ -58,7 +58,7 @@ headerbar button.titlebutton.maximize,
 /* Finestra non attiva: cerchi grigi */
 headerbar button.titlebutton:backdrop,
 .titlebar button.titlebutton:backdrop {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.16) 6.5px, transparent 7px);
+  background-image: radial-gradient(circle, {{button_idle:0.16}} 6.5px, transparent 7px);
 }
 
 /* Mouse sul pulsante: colore più chiaro e simbolo */

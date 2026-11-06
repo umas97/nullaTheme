@@ -16,7 +16,7 @@ import GObject from 'gi://GObject';
 import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 import {QuickSlider} from 'resource:///org/gnome/shell/ui/quickSettings.js';
 
 import {blurRadii, computeTokens, render} from './tokens.js';
@@ -41,13 +41,13 @@ const APPS_BUSY = 3;             // codice di uscita di apps.py: app aperta
 const TransparencySlider = GObject.registerClass(
 class NullaTransparencySlider extends QuickSlider {
     _init(settings, gicon, onPreview) {
-        super._init({gicon, iconLabel: 'Trasparenza'});
+        super._init({gicon, iconLabel: _('Transparency')});
 
         this._settings = settings;
         this._onPreview = onPreview;
         this._saveId = 0;
 
-        this.slider.accessible_name = 'Trasparenza';
+        this.slider.accessible_name = _('Transparency');
         this.slider.connectObject('notify::value',
             () => this._onSliderChanged(), this);
         this._settings.connectObject('changed::transparency',
@@ -104,6 +104,10 @@ export default class NullaExtension extends Extension {
         this._cleanCache();
 
         Main.uiGroup.add_style_class_name(STYLE_CLASS);
+
+        // Chiaro o scuro segue Impostazioni → Aspetto.
+        this._interface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
+        this._interface.connectObject('changed::color-scheme', () => this._onSettingsChanged(), this);
 
         this._settings.connectObject(
             'changed::transparency', () => this._onSettingsChanged(),
@@ -165,6 +169,8 @@ export default class NullaExtension extends Extension {
 
         this._removeSlider();
         this._settings.disconnectObject(this);
+        this._interface.disconnectObject(this);
+        this._interface = null;
         St.Settings.get().disconnectObject(this);
         this._themeContext = null;
 
@@ -185,14 +191,18 @@ export default class NullaExtension extends Extension {
 
     // ───────────── impostazioni → tema ─────────────
 
-    _tokens() {
+    get _dark() {
+        return this._interface.get_string('color-scheme') === 'prefer-dark';
+    }
+
+    _tokens(dark = this._dark) {
         const transparency = this._previewTransparency ??
             this._settings.get_int('transparency');
         const appTransparency = this._settings.get_boolean('app-transparency-enabled')
             ? this._settings.get_int('app-transparency') : 0;
         return computeTokens(transparency, this._settings.get_int('radius'),
             this._settings.get_int('panel-height'), appTransparency,
-            this._settings.get_int('clock-size'));
+            this._settings.get_int('clock-size'), dark);
     }
 
     _onSettingsChanged() {
@@ -262,7 +272,8 @@ export default class NullaExtension extends Extension {
     // ───────────── App GTK ─────────────
 
     _writeGtk() {
-        writeGtkFiles(this.dir, this._tokens(), this._settings.get_boolean('apply-gtk'));
+        writeGtkFiles(this.dir, dark => this._tokens(dark), this._dark,
+            this._settings.get_boolean('apply-gtk'));
     }
 
     // ───────────── VS Code ─────────────

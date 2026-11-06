@@ -1,0 +1,534 @@
+# Nulla — it translation.
+# This file is distributed under the same license as Nulla (GPL-3.0).
+msgid ""
+msgstr ""
+"Project-Id-Version: nulla\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Translators: short date under the clock, strftime format (e.g. "Fri, Nov 6")
+#: extension/nulla@umas97/clockFace.js:41
+msgid "%a, %b %e"
+msgstr "%a %e %b"
+
+#. Translators: day and month without weekday, strftime format (e.g. "November 6")
+#: extension/nulla@umas97/clockFace.js:44
+msgid "%B %e"
+msgstr "%e %B"
+
+#. Translators: long date under the clock, strftime format (e.g. "Friday, November 6")
+#: extension/nulla@umas97/clockFace.js:47
+msgid "%A, %B %e"
+msgstr "%A %e %B"
+
+#: extension/nulla@umas97/extension.js:44 extension/nulla@umas97/extension.js:50
+msgid "Transparency"
+msgstr "Trasparenza"
+
+#: extension/nulla@umas97/prefs.js:9
+msgid "Top left"
+msgstr "In alto a sinistra"
+
+#: extension/nulla@umas97/prefs.js:9
+msgid "Top center"
+msgstr "In alto al centro"
+
+#: extension/nulla@umas97/prefs.js:9
+msgid "Top right"
+msgstr "In alto a destra"
+
+#: extension/nulla@umas97/prefs.js:10
+msgid "Center left"
+msgstr "Al centro a sinistra"
+
+#: extension/nulla@umas97/prefs.js:10
+msgid "Center"
+msgstr "Al centro"
+
+#: extension/nulla@umas97/prefs.js:10
+msgid "Center right"
+msgstr "Al centro a destra"
+
+#: extension/nulla@umas97/prefs.js:11
+msgid "Bottom left"
+msgstr "In basso a sinistra"
+
+#: extension/nulla@umas97/prefs.js:11
+msgid "Bottom center"
+msgstr "In basso al centro"
+
+#: extension/nulla@umas97/prefs.js:11
+msgid "Bottom right"
+msgstr "In basso a destra"
+
+#: extension/nulla@umas97/prefs.js:31
+msgid "Classic"
+msgstr "Classico"
+
+#: extension/nulla@umas97/prefs.js:31
+msgid "Large light time, date below"
+msgstr "Ora grande e leggera, data sotto"
+
+#: extension/nulla@umas97/prefs.js:32
+msgid "Thin"
+msgstr "Sottile"
+
+#: extension/nulla@umas97/prefs.js:32
+msgid "Huge hairline time, spaced uppercase date"
+msgstr "Ora enorme e sottilissima, data maiuscola spaziata"
+
+#: extension/nulla@umas97/prefs.js:33
+msgid "Bold"
+msgstr "Deciso"
+
+#: extension/nulla@umas97/prefs.js:33
+msgid "Compact bold time"
+msgstr "Ora compatta in grassetto"
+
+#: extension/nulla@umas97/prefs.js:34
+msgid "Stacked"
+msgstr "Impilato"
+
+#: extension/nulla@umas97/prefs.js:34
+msgid "Hours on top, minutes below"
+msgstr "Ore sopra, minuti sotto"
+
+#: extension/nulla@umas97/prefs.js:35
+msgid "Accent"
+msgstr "Accento"
+
+#: extension/nulla@umas97/prefs.js:35
+msgid "Minutes in the accent color"
+msgstr "Minuti nel colore d'accento"
+
+#: extension/nulla@umas97/prefs.js:36
+msgid "Elegant"
+msgstr "Elegante"
+
+#: extension/nulla@umas97/prefs.js:36
+msgid "Weekday first, time on the line below"
+msgstr "Giorno in evidenza, ora nella riga sotto"
+
+#: extension/nulla@umas97/prefs.js:37
+msgid "Pill"
+msgstr "Pillola"
+
+#: extension/nulla@umas97/prefs.js:37
+msgid "One line in a glass capsule"
+msgstr "Una riga in una capsula di vetro"
+
+#: extension/nulla@umas97/prefs.js:38
+msgid "Analog"
+msgstr "Analogico"
+
+#: extension/nulla@umas97/prefs.js:38
+msgid "Minimal dial with hands"
+msgstr "Quadrante minimal con lancette"
+
+#: extension/nulla@umas97/prefs.js:43
+msgid "Style"
+msgstr "Stile"
+
+#: extension/nulla@umas97/prefs.js:64
+msgid "Smart"
+msgstr "Intelligente"
+
+#: extension/nulla@umas97/prefs.js:64
+msgid "Bell; shows the time when the desktop clock is covered"
+msgstr "Campanella; diventa l'ora quando l'orologio sul desktop è coperto"
+
+#: extension/nulla@umas97/prefs.js:65
+msgid "Always the time"
+msgstr "Sempre l'ora"
+
+#: extension/nulla@umas97/prefs.js:65
+msgid "HH:MM instead of the bell"
+msgstr "HH:MM al posto della campanella"
+
+#: extension/nulla@umas97/prefs.js:66
+msgid "Always the bell"
+msgstr "Sempre la campanella"
+
+#: extension/nulla@umas97/prefs.js:66
+msgid "The time stays on the desktop only"
+msgstr "L'ora resta solo sul desktop"
+
+#: extension/nulla@umas97/prefs.js:72
+msgid "Time in the bar"
+msgstr "Ora nella barra"
+
+#: extension/nulla@umas97/prefs.js:94
+msgid "Size"
+msgstr "Dimensione"
+
+#: extension/nulla@umas97/prefs.js:122
+msgid "Position"
+msgstr "Posizione"
+
+#: extension/nulla@umas97/prefs.js:123
+msgid "On the primary monitor"
+msgstr "Sul monitor principale"
+
+#: extension/nulla@umas97/prefs.js:181
+msgid "Appearance"
+msgstr "Aspetto"
+
+#: extension/nulla@umas97/prefs.js:182
+msgid "Accent color and light or dark style are chosen in Settings → Appearance."
+msgstr "Accento e stile chiaro o scuro si scelgono in Impostazioni → Aspetto."
+
+#: extension/nulla@umas97/prefs.js:184
+msgid "Shell transparency"
+msgstr "Trasparenza della shell"
+
+#: extension/nulla@umas97/prefs.js:185
+msgid "Bar, menus, notifications; same as the Quick Settings slider"
+msgstr "Barra, menu, notifiche; è lo slider delle impostazioni rapide"
+
+#: extension/nulla@umas97/prefs.js:186
+msgid "Corner radius"
+msgstr "Raggio degli angoli"
+
+#: extension/nulla@umas97/prefs.js:187
+msgid "In pixels; menus, windows and notifications follow it"
+msgstr "In pixel; menu, finestre e notifiche ne derivano"
+
+#: extension/nulla@umas97/prefs.js:191
+msgid "App windows"
+msgstr "Finestre delle app"
+
+#: extension/nulla@umas97/prefs.js:192
+msgid "Title bar and sidebar. Apps that are already open must be reopened."
+msgstr "Barra del titolo e sidebar. Le app già aperte vanno riaperte."
+
+#: extension/nulla@umas97/prefs.js:194
+msgid "Window transparency"
+msgstr "Trasparenza delle finestre"
+
+#: extension/nulla@umas97/prefs.js:195
+msgid "When off, title bar and sidebar are opaque"
+msgstr "Se disattivata, barra del titolo e sidebar sono opache"
+
+#: extension/nulla@umas97/prefs.js:196
+msgid "Amount"
+msgstr "Quantità"
+
+#: extension/nulla@umas97/prefs.js:197
+msgid "0 = opaque, 100 = maximum; independent of the shell"
+msgstr "0 = opaco, 100 = massima; indipendente dalla shell"
+
+#: extension/nulla@umas97/prefs.js:202
+msgid "Top bar"
+msgstr "Barra superiore"
+
+#: extension/nulla@umas97/prefs.js:203
+msgid "Height"
+msgstr "Altezza"
+
+#: extension/nulla@umas97/prefs.js:204
+msgid "In pixels; the pill and the icons adapt"
+msgstr "In pixel; la pillola e le icone si adattano"
+
+#: extension/nulla@umas97/prefs.js:205
+msgid "Apps in the bar"
+msgstr "App nella barra"
+
+#: extension/nulla@umas97/prefs.js:206
+msgid "Favorite and open apps in the middle; date and time become a bell"
+msgstr "Preferite e app aperte al centro; data e ora diventano una campanella"
+
+#: extension/nulla@umas97/prefs.js:210
+msgid "Quick Settings"
+msgstr "Impostazioni rapide"
+
+#: extension/nulla@umas97/prefs.js:211
+msgid "Round icon toggles"
+msgstr "Toggle a icone tonde"
+
+#: extension/nulla@umas97/prefs.js:212
+msgid "Control Center style; right click for the submenu (e.g. Wi-Fi networks)"
+msgstr "Stile Control Center; clic destro per il sottomenu (es. reti Wi-Fi)"
+
+#: extension/nulla@umas97/prefs.js:213
+msgid "Transparency slider"
+msgstr "Slider della trasparenza"
+
+#: extension/nulla@umas97/prefs.js:214
+msgid "Below the brightness slider"
+msgstr "Sotto lo slider della luminosità"
+
+#: extension/nulla@umas97/prefs.js:215
+msgid "Toggle editing"
+msgstr "Modifica dei toggle"
+
+#: extension/nulla@umas97/prefs.js:216
+msgid "Pencil at the bottom of the panel: hide, add and reorder toggles"
+msgstr "Matita in fondo al pannello: nascondi, aggiungi e riordina i toggle"
+
+#: extension/nulla@umas97/prefs.js:218
+msgid "Reset toggles"
+msgstr "Ripristina i toggle"
+
+#: extension/nulla@umas97/prefs.js:219
+msgid "Back to GNOME's order, with every toggle visible again"
+msgstr "Torna all'ordine di GNOME e mostra di nuovo tutti i toggle"
+
+#: extension/nulla@umas97/prefs.js:222
+msgid "Reset"
+msgstr "Ripristina"
+
+#: extension/nulla@umas97/prefs.js:234
+msgid "Desktop clock"
+msgstr "Orologio sul desktop"
+
+#: extension/nulla@umas97/prefs.js:235
+msgid "Show clock"
+msgstr "Mostra orologio"
+
+#: extension/nulla@umas97/prefs.js:236
+msgid "Its color adapts to the wallpaper to stay readable"
+msgstr "Il colore si adatta allo sfondo per restare leggibile"
+
+#: extension/nulla@umas97/prefs.js:243
+msgid "Lock and login"
+msgstr "Blocco e accesso"
+
+#: extension/nulla@umas97/prefs.js:244
+msgid "The login screen (GDM) does not load extensions: install it separately with\ntools/gdm/install-gdm.sh (needs the administrator password)."
+msgstr "La schermata di accesso (GDM) non carica le estensioni: si installa a parte con\ntools/gdm/install-gdm.sh (richiede la password di amministratore)."
+
+#: extension/nulla@umas97/prefs.js:246
+msgid "Nulla lock screen"
+msgstr "Schermata di blocco Nulla"
+
+#: extension/nulla@umas97/prefs.js:247
+msgid "Clock in the desktop style, small avatar, glass pill password field"
+msgstr "Orologio nello stile del desktop, avatar piccolo, password a pillola di vetro"
+
+#: extension/nulla@umas97/prefs.js:250
+msgid "Integrations"
+msgstr "Integrazioni"
+
+#: extension/nulla@umas97/prefs.js:251
+msgid "Apply to GTK apps"
+msgstr "Applica alle app GTK"
+
+#: extension/nulla@umas97/prefs.js:252
+msgid "Apps that are already open must be reopened to see changes"
+msgstr "Le app già aperte vanno riaperte per vedere le modifiche"
+
+#: extension/nulla@umas97/prefs.js:254
+msgid "Theme with the system accent and Nulla window buttons; visible after reopening"
+msgstr "Tema con l'accento di sistema e pulsanti finestra di Nulla; visibile alla riapertura"
+
+#: extension/nulla@umas97/prefs.js:256
+msgid "GTK theme with Nulla window buttons; applied while Chrome is closed"
+msgstr "Tema GTK con i pulsanti finestra di Nulla; si applica quando Chrome è chiuso"
+
+#: extension/nulla@umas97/prefs.js:257
+msgid "Match Blur my Shell"
+msgstr "Allinea Blur my Shell"
+
+#: extension/nulla@umas97/prefs.js:258
+msgid "Use the same corner radii for the blur"
+msgstr "Usa gli stessi raggi degli angoli per la sfocatura"
+
+#: extension/nulla@umas97/toggleEditor.js:232
+msgid "Tap to hide · drag to reorder"
+msgstr "Tocca per nascondere · trascina per riordinare"
+
+#: extension/nulla@umas97/toggleEditor.js:242 extension/nulla@umas97/toggleEditor.js:262
+msgid "Edit toggles"
+msgstr "Modifica i toggle"
+
+#: extension/nulla@umas97/toggleEditor.js:262
+msgid "Done"
+msgstr "Fine"
+
+#: extension/nulla@umas97/toggleEditor.js:268
+msgid "Hidden · tap to add"
+msgstr "Nascosti · tocca per aggiungere"
+
+#: install.sh:25 tools/gdm/build-gdm-theme.sh:19
+#, c-format
+msgid "Missing command: %s"
+msgstr "Comando mancante: %s"
+
+#: install.sh:40
+#, c-format
+msgid "Skipped: %s (schema or key missing)"
+msgstr "Saltato: %s (schema o chiave assente)"
+
+#: install.sh:46
+#, c-format
+msgid "Backing up the original settings to %s"
+msgstr "Backup delle impostazioni originali in %s"
+
+#: install.sh:72
+#, c-format
+msgid "Original backup already present, keeping it (%s)"
+msgstr "Backup originale già presente: lo conservo (%s)"
+
+#: install.sh:77
+#, c-format
+msgid "Copying the extension to %s"
+msgstr "Copio l'estensione in %s"
+
+#: install.sh:86
+msgid "Linking the theme to GTK 3 and GTK 4 apps"
+msgstr "Collego il tema alle app GTK3 e GTK4"
+
+#: install.sh:101
+msgid "Setting macOS-style window buttons on the right (− + ×)"
+msgstr "Imposto i pulsanti finestra stile macOS a destra (− + ×)"
+
+#: install.sh:106
+msgid "Blur my Shell: blur on, tint handled by Nulla"
+msgstr "Blur my Shell: sfocatura attiva, tinta gestita da Nulla"
+
+#: install.sh:112
+msgid "Blur my Shell not found: no blur (the theme works anyway)"
+msgstr "Blur my Shell non trovata: niente sfocatura (il tema funziona comunque)"
+
+#: install.sh:116
+msgid "Dock: transparency handled by the theme"
+msgstr "Dock: trasparenza gestita dal tema"
+
+#: install.sh:123
+msgid "Enabling the extension and turning off the dock (apps move to the top bar)"
+msgstr "Attivo l'estensione e disattivo la dock (le app passano nella barra superiore)"
+
+#: install.sh:158
+msgid "Done."
+msgstr "Fatto."
+
+#: install.sh:159
+msgid "• Log out and back in to activate the shell theme and the slider."
+msgstr "• Esci e rientra (logout/login) per attivare il tema della shell e lo slider."
+
+#: install.sh:160
+msgid "• GTK apps that are already open must be reopened."
+msgstr "• Le app GTK già aperte vanno riaperte."
+
+#: install.sh:161
+msgid "• Accent and light/dark: Settings → Appearance.  Transparency: Quick Settings (top right)."
+msgstr "• Accento e chiaro/scuro: Impostazioni → Aspetto.  Trasparenza: impostazioni rapide (in alto a destra)."
+
+#: install.sh:162
+msgid "• Uninstall: ./uninstall.sh"
+msgstr "• Disinstallazione: ./uninstall.sh"
+
+#: tools/gdm/build-gdm-theme.sh:21
+#, c-format
+msgid "Yaru theme not found: %s"
+msgstr "Tema Yaru non trovato: %s"
+
+#: tools/gdm/build-gdm-theme.sh:27
+msgid "Extracting Yaru's GDM theme"
+msgstr "Estraggo il tema GDM di Yaru"
+
+#: tools/gdm/build-gdm-theme.sh:33
+msgid "gdm.css missing from the Yaru theme"
+msgstr "gdm.css mancante nel tema Yaru"
+
+#: tools/gdm/build-gdm-theme.sh:51
+#, c-format
+msgid "Accent: %s → %s"
+msgstr "Accento: %s → %s"
+
+#: tools/gdm/build-gdm-theme.sh:54
+msgid "Adding Nulla's styles"
+msgstr "Aggiungo gli stili di Nulla"
+
+#: tools/gdm/build-gdm-theme.sh:61
+#, c-format
+msgid "Generation failed: %s"
+msgstr "Generazione fallita: %s"
+
+#: tools/gdm/build-gdm-theme.sh:73
+#, c-format
+msgid "Blurring the wallpaper: %s"
+msgstr "Sfoco lo sfondo: %s"
+
+#: tools/gdm/build-gdm-theme.sh:77
+#, c-format
+msgid "Wallpaper not usable (%s): using a dark tint"
+msgstr "Sfondo non utilizzabile (%s): uso una tinta scura"
+
+#: tools/gdm/build-gdm-theme.sh:82
+msgid "Compiling the theme"
+msgstr "Compilo il tema"
+
+#: tools/gdm/build-gdm-theme.sh:99
+#, c-format
+msgid "Resource missing from the compiled theme: %s"
+msgstr "Risorsa mancante nel tema compilato: %s"
+
+#: tools/gdm/build-gdm-theme.sh:101
+#, c-format
+msgid "Ready: %s"
+msgstr "Pronto: %s"
+
+#: tools/gdm/install-gdm.sh:22
+msgid "Run it as your normal user (without sudo): it needs to read your wallpaper and accent."
+msgstr "Lancialo come utente normale (senza sudo): serve leggere sfondo e accento."
+
+#: tools/gdm/install-gdm.sh:28
+msgid "Installing the theme (needs the administrator password)"
+msgstr "Installo il tema (richiede la password di amministratore)"
+
+#: tools/gdm/install-gdm.sh:34
+msgid "Done. The new login screen appears at the next logout or reboot."
+msgstr "Fatto. La nuova schermata di accesso si vede al prossimo logout o riavvio."
+
+#: tools/gdm/install-gdm.sh:35
+msgid "• To go back to Ubuntu's: tools/gdm/uninstall-gdm.sh"
+msgstr "• Per tornare a quella di Ubuntu: tools/gdm/uninstall-gdm.sh"
+
+#: tools/gdm/install-gdm.sh:36
+msgid "• If something goes wrong and you can't log in: Ctrl+Alt+F3,"
+msgstr "• Se qualcosa andasse storto e non riuscissi ad accedere: Ctrl+Alt+F3,"
+
+#: tools/gdm/install-gdm.sh:37
+#, c-format
+msgid "  log in from the console and run: sudo update-alternatives --auto %s"
+msgstr "  accedi dal terminale e lancia: sudo update-alternatives --auto %s"
+
+#: tools/gdm/uninstall-gdm.sh:14
+msgid "Done: Ubuntu's login screen is back (visible at the next logout)."
+msgstr "Fatto: schermata di accesso di Ubuntu ripristinata (visibile al prossimo logout)."
+
+#: uninstall.sh:12
+msgid "Disabling the extension and turning the dock back on"
+msgstr "Disattivo l'estensione e riattivo la dock"
+
+#: uninstall.sh:32
+msgid "Removing files"
+msgstr "Rimuovo i file"
+
+#: uninstall.sh:46
+msgid "VS Code and Chrome: restoring the previous settings"
+msgstr "VS Code e Chrome: rimetto le impostazioni di prima"
+
+#: uninstall.sh:52
+msgid "Chrome is open: close it and run ./uninstall.sh again to restore its previous theme"
+msgstr "Chrome è aperto: chiudilo e rilancia ./uninstall.sh per rimettere il tema di prima"
+
+#: uninstall.sh:53
+#, c-format
+msgid "%s: settings left unchanged (unreadable file), fix them by hand"
+msgstr "%s: impostazioni non modificate (file illeggibile), da sistemare a mano"
+
+#: uninstall.sh:58
+msgid "Restoring the original settings (dock, Blur my Shell, buttons, color scheme)"
+msgstr "Ripristino le impostazioni originali (dock, Blur my Shell, pulsanti, schema colori)"
+
+#: uninstall.sh:63
+msgid "No backup found: dock and Blur my Shell settings left as they are"
+msgstr "Nessun backup trovato: impostazioni di dock e Blur my Shell lasciate come sono"
+
+#: uninstall.sh:66
+msgid "Done. Log out and back in to fully return to the previous theme."
+msgstr "Fatto. Esci e rientra per tornare completamente al tema di prima."

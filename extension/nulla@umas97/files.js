@@ -35,11 +35,16 @@ export function ensureDir(dir) {
  * Scrive ~/.config/gtk-{3,4}.0/nulla.css e i simboli dei pulsanti.
  * gtk.css li importa (riga aggiunta da install.sh).
  *
+ * GTK4 riceve entrambe le varianti (la scura dentro @media prefers-color-scheme,
+ * così le app seguono il sistema da sole); GTK3 non ha le media query e riceve
+ * solo quella attuale.
+ *
  * @param {Gio.File} extDir cartella dell'estensione
- * @param {object} tokens valori calcolati da computeTokens()
+ * @param {(dark: boolean) => object} tokensFor valori di computeTokens() per variante
+ * @param {boolean} dark variante attuale del sistema
  * @param {boolean} apply false = scrive un file vuoto (tema disattivato per le app)
  */
-export function writeGtkFiles(extDir, tokens, apply) {
+export function writeGtkFiles(extDir, tokensFor, dark, apply) {
     const themeDir = extDir.get_child('theme');
 
     for (const [version, template] of GTK_TARGETS) {
@@ -53,9 +58,14 @@ export function writeGtkFiles(extDir, tokens, apply) {
                 Gio.FileCopyFlags.OVERWRITE, null, null);
         }
 
-        const css = apply
-            ? render(readText(themeDir.get_child(template)), tokens)
-            : '/* Nulla: tema disattivato per le app (impostazione apply-gtk) */\n';
+        const source = readText(themeDir.get_child(template));
+        let css = '/* Nulla: tema disattivato per le app (impostazione apply-gtk) */\n';
+        if (apply && version === 'gtk-4.0') {
+            css = `${render(source, tokensFor(false))}\n` +
+                `@media (prefers-color-scheme: dark) {\n${render(source, tokensFor(true))}\n}\n`;
+        } else if (apply) {
+            css = render(source, tokensFor(dark));
+        }
         writeText(dir.get_child('nulla.css'), css);
     }
 }
@@ -99,6 +109,8 @@ function accentTokens(hex) {
         accent: rgbToHex(rgb),
         // Più chiaro: testo e parole chiave leggibili sullo sfondo scuro
         accent_text: rgbToHex(rgb.map(v => v + (255 - v) * 0.35)),
+        // Più scuro: lo stesso sullo sfondo chiaro (tema "Nulla Light")
+        accent_strong: rgbToHex(rgb.map(v => v * 0.72)),
         accent_fg: luminance > 0.4 ? '#141416' : '#ffffff',
     };
 }
@@ -120,10 +132,12 @@ export function writeVscodeTheme(extDir, accentHex) {
     source.get_child('package.json').copy(target.get_child('package.json'),
         Gio.FileCopyFlags.OVERWRITE, null, null);
 
-    const json = render(readText(source.get_child('nulla-color-theme.json.in')), accentTokens(accentHex));
-    const file = themes.get_child('nulla-color-theme.json');
-    // Riscrive solo se cambia: VS Code non deve vedere modifiche inutili.
-    if (!file.query_exists(null) || readText(file) !== json)
-        writeText(file, json);
+    for (const name of ['nulla-color-theme', 'nulla-light-color-theme']) {
+        const json = render(readText(source.get_child(`${name}.json.in`)), accentTokens(accentHex));
+        const file = themes.get_child(`${name}.json`);
+        // Riscrive solo se cambia: VS Code non deve vedere modifiche inutili.
+        if (!file.query_exists(null) || readText(file) !== json)
+            writeText(file, json);
+    }
     return true;
 }

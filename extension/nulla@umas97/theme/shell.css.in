@@ -5,16 +5,17 @@
  * vince su Yaru senza riscriverlo e sparisce disattivando l'estensione.
  * L'accento è sempre -st-accent-color (Impostazioni → Aspetto).
  *
- * "Vetro" = tinta scura semi-trasparente (sopra la sfocatura di Blur my Shell)
- *          + bordo chiaro sottilissimo.
+ * "Vetro" = tinta semi-trasparente (sopra la sfocatura di Blur my Shell)
+ *          + bordo sottilissimo. Colori: {{nome}} e {{nome:alfa}} vengono dalla
+ *          variante chiara o scura (PALETTES in tokens.js).
  */
 
 /* ───────────────────────── Barra superiore: pillola flottante ───────────────────────── */
 
 .nulla #panel,
 .nulla #panel:overview {
-  background-color: rgba(18, 18, 21, {{a_panel}}) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background-color: rgba({{panel_bg}}, {{a_panel}}) !important;
+  border: 1px solid {{ink:0.09}};
   border-radius: {{r_panel}}px;
   /* stesso spazio sopra e sotto: le finestre massimizzate iniziano dopo il margine */
   margin: 6px 8px 6px 8px;
@@ -30,25 +31,43 @@
   border-color: transparent;
 }
 
+/* …e icone sempre chiare: blocco e accesso restano scuri anche col tema chiaro */
+.nulla #panel.unlock-screen .panel-button,
+.nulla #panel.login-screen .panel-button,
+.nulla #panel.unlock-screen .system-status-icon,
+.nulla #panel.login-screen .system-status-icon {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
 .nulla #panel .panel-button {
   font-weight: normal !important;
-  color: rgba(255, 255, 255, 0.92);
+  color: {{text:0.92}};
   border: 3px solid transparent;
   border-radius: 999px;
   box-shadow: none;
   background-color: transparent;
 }
 
+/* Yaru tiene la barra sempre scura e forza icone e puntini dei workspace chiari
+   (!important): qui seguono la variante di Nulla. */
+.nulla #panel .system-status-icon {
+  color: {{text:0.92}} !important;
+}
+
+.nulla #panel .panel-button#panelActivities .workspace-dot {
+  background-color: {{text:0.92}} !important;
+}
+
 .nulla #panel .panel-button:hover,
 .nulla #panel .panel-button:focus {
   box-shadow: none;
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
 }
 
 .nulla #panel .panel-button:active,
 .nulla #panel .panel-button:checked {
   box-shadow: none;
-  background-color: rgba(255, 255, 255, 0.16);
+  background-color: {{ink:0.16}};
 }
 
 .nulla #panel .panel-button.clock-display .clock,
@@ -67,12 +86,12 @@
 
 .nulla #panel .panel-button.nulla-bell-button:hover,
 .nulla #panel .panel-button.nulla-bell-button:focus {
-  background-color: rgba(255, 255, 255, 0.10) !important;
+  background-color: {{ink:0.10}} !important;
 }
 
 .nulla #panel .panel-button.nulla-bell-button:active,
 .nulla #panel .panel-button.nulla-bell-button:checked {
-  background-color: rgba(255, 255, 255, 0.16) !important;
+  background-color: {{ink:0.16}} !important;
 }
 
 /* Ora nella barra: compare al posto della campanella quando l'orologio
@@ -81,7 +100,7 @@
   font-size: 0.95em;
   font-weight: 500;
   font-feature-settings: "tnum";
-  color: rgba(255, 255, 255, 0.85);
+  color: {{text:0.85}};
   padding: 0 4px;
 }
 
@@ -108,11 +127,11 @@
 
 .nulla .nulla-app-button:hover,
 .nulla .nulla-app-button:focus {
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
 }
 
 .nulla .nulla-app-button:active {
-  background-color: rgba(255, 255, 255, 0.16);
+  background-color: {{ink:0.16}};
 }
 
 /* Segnaposto mentre si trascina un'icona nella barra */
@@ -121,8 +140,8 @@
   height: {{panel_icon}}px;
   margin: 0 7px;
   border-radius: {{r_sm}}px;
-  background-color: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background-color: {{ink:0.10}};
+  border: 1px solid {{ink:0.22}};
 }
 
 .nulla .nulla-app-icon {
@@ -134,7 +153,7 @@
   height: 3px;
   margin-top: 2px;
   border-radius: 2px;
-  background-color: rgba(255, 255, 255, 0.55);
+  background-color: {{ink:0.55}};
 }
 
 .nulla .nulla-app-button.focused .nulla-app-dot {
@@ -146,8 +165,8 @@
 
 .nulla .popup-menu-content,
 .nulla .candidate-popup-content {
-  background-color: rgba(30, 30, 34, {{a_popup}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_popup}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r}}px;
   box-shadow: none;
   padding: 5px;
@@ -161,42 +180,42 @@
 .nulla .popup-menu-item:hover,
 .nulla .popup-menu-item:focus,
 .nulla .popup-menu-item.selected {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
 }
 
 .nulla .popup-menu-item:active,
 .nulla .popup-menu-item:checked {
-  background-color: rgba(255, 255, 255, 0.13);
+  background-color: {{ink:0.13}};
 }
 
 .nulla .popup-sub-menu {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: {{ink:0.04}};
   border: none;
   border-radius: 0 0 {{r_sm}}px {{r_sm}}px;
 }
 
 .nulla .popup-separator-menu-item .popup-separator-menu-item-separator {
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: {{ink:0.07}};
 }
 
 /* ───────────────────────── Impostazioni rapide: Control Center ───────────────────────── */
 
 .nulla .quick-settings {
-  background-color: rgba(30, 30, 34, {{a_popup}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_popup}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_xl}}px;
   padding: 16px;
 }
 
 /* Pulsanti tondi della riga in alto (screenshot, impostazioni, blocco, …) */
 .nulla .quick-settings .icon-button {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
   box-shadow: none;
   border: none;
 }
 
 .nulla .quick-settings .icon-button:hover {
-  background-color: rgba(255, 255, 255, 0.14);
+  background-color: {{ink:0.14}};
 }
 
 .nulla .quick-slider .icon-button.flat,
@@ -207,14 +226,14 @@
 /* Toggle (anche nella versione con testo, se i toggle a icone sono disattivati) */
 .nulla .quick-settings .quick-toggle,
 .nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
   box-shadow: none;
   border: none;
 }
 
 .nulla .quick-settings .quick-toggle:hover,
 .nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:hover {
-  background-color: rgba(255, 255, 255, 0.14);
+  background-color: {{ink:0.14}};
 }
 
 .nulla .quick-settings .quick-toggle:checked,
@@ -229,7 +248,7 @@
 }
 
 .nulla .quick-settings .quick-toggle-has-menu .quick-toggle-separator {
-  background-color: rgba(0, 0, 0, 0.18);
+  background-color: {{shade:0.18}};
 }
 
 /* Toggle a icona: il pulsante (largo quanto la cella della griglia) è
@@ -277,13 +296,13 @@
   icon-size: 18px;
   padding: 16px;
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.92);
-  background-color: rgba(255, 255, 255, 0.09);
+  color: {{text:0.92}};
+  background-color: {{ink:0.09}};
   transition-duration: 150ms;
 }
 
 .nulla .quick-settings .nulla-icon-toggle:hover .quick-toggle-icon {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: {{ink:0.15}};
 }
 
 .nulla .quick-settings .quick-toggle.nulla-icon-toggle:checked .quick-toggle-icon,
@@ -298,8 +317,8 @@
 }
 
 .nulla .quick-toggle-menu {
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: {{ink:0.07}};
+  border: 1px solid {{ink:0.06}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
@@ -316,7 +335,7 @@
 }
 
 .nulla .quick-settings .nulla-qs-edit-button:hover {
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
 }
 
 .nulla .nulla-qs-editing .nulla-qs-edit-button {
@@ -326,20 +345,20 @@
 
 .nulla .nulla-qs-edit-hint {
   font-size: 0.85em;
-  color: rgba(255, 255, 255, 0.50);
+  color: {{text:0.50}};
 }
 
 .nulla .nulla-qs-hidden-header {
   font-size: 0.85em;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.50);
+  color: {{text:0.50}};
   padding: 10px 4px 2px 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid {{ink:0.08}};
 }
 
 /* Durante la modifica i toggle "respirano" un po' e il bersaglio si evidenzia */
 .nulla .nulla-qs-editing .nulla-icon-toggle .quick-toggle-icon {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px {{ink:0.18}};
 }
 
 .nulla .quick-settings .nulla-qs-drop-target .quick-toggle-icon,
@@ -349,9 +368,11 @@
 
 /* Slider: traccia sottile, maniglia piccola */
 .nulla .slider {
-  color: #f2f2f2;
+  color: rgb({{slider_handle}});
+  -slider-handle-border-width: {{slider_border}}px;
+  -slider-handle-border-color: {{shade:0.25}};
   -barlevel-height: 3px;
-  -barlevel-background-color: rgba(255, 255, 255, 0.12);
+  -barlevel-background-color: {{ink:0.12}};
   -barlevel-active-background-color: -st-accent-color;
   -slider-handle-radius: 7px;
 }
@@ -383,14 +404,14 @@
 }
 
 .nulla .calendar .calendar-month-header .pager-button:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
 }
 
 .nulla .calendar .calendar-day-heading,
 .nulla .calendar .calendar-day-heading:hover {
   background-color: transparent;
   box-shadow: none;
-  color: rgba(255, 255, 255, 0.40);
+  color: {{text:0.40}};
 }
 
 /* Giorni: solo numeri, niente riquadri */
@@ -399,25 +420,25 @@
   border: none;
   box-shadow: none;
   border-radius: 999px;
-  color: rgba(255, 255, 255, 0.88);
+  color: {{text:0.88}};
 }
 
 .nulla .calendar .calendar-day:hover,
 .nulla .calendar .calendar-day:focus {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
 }
 
 .nulla .calendar .calendar-day:selected {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: {{ink:0.12}};
 }
 
 .nulla .calendar .calendar-day.calendar-no-work {
-  color: rgba(255, 255, 255, 0.55);
+  color: {{text:0.55}};
 }
 
 .nulla .calendar .calendar-day.calendar-other-month,
 .nulla .calendar .calendar-day.calendar-other-month-day {
-  color: rgba(255, 255, 255, 0.22);
+  color: {{text:0.22}};
 }
 
 /* Oggi: cerchio color accento */
@@ -432,7 +453,7 @@
 
 .nulla .calendar .calendar-week-number {
   background-color: transparent;
-  color: rgba(255, 255, 255, 0.30);
+  color: {{text:0.30}};
 }
 
 /* ───────────────────────── Notifiche: card di vetro ───────────────────────── */
@@ -442,40 +463,40 @@
 }
 
 .nulla .message {
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background-color: {{ink:0.07}};
+  border: 1px solid {{ink:0.09}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
 
 .nulla .message:hover {
-  background-color: rgba(255, 255, 255, 0.11);
+  background-color: {{ink:0.11}};
 }
 
 .nulla .message:second-in-stack,
 .nulla .message:lower-in-stack {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.06);
+  background-color: {{ink:0.05}};
+  border-color: {{ink:0.06}};
 }
 
 .nulla .message-list-placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: {{text:0.35}};
 }
 
 .nulla .message-list-controls .message-list-clear-button {
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.07}};
+  border: 1px solid {{ink:0.08}};
   box-shadow: none;
 }
 
 .nulla .message-list-controls .message-list-clear-button:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: {{ink:0.12}};
 }
 
 .nulla .notification-banner,
 .nulla .notification-banner:hover {
-  background-color: rgba(30, 30, 34, {{a_notification}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_notification}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
@@ -483,7 +504,7 @@
 .nulla .events-button,
 .nulla .world-clocks-button,
 .nulla .weather-button {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: {{ink:0.06}};
   border: none;
   box-shadow: none;
   border-radius: {{r}}px;
@@ -493,16 +514,16 @@
 
 .nulla .osd-window,
 .nulla .resize-popup {
-  background-color: rgba(30, 30, 34, {{a_osd}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_osd}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
 
 .nulla .switcher-list,
 .nulla .workspace-switcher {
-  background-color: rgba(30, 30, 34, {{a_osd}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_osd}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
@@ -512,13 +533,13 @@
 }
 
 .nulla .switcher-list .item-box:selected {
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
 }
 
 .nulla .modal-dialog,
 .nulla .run-dialog {
-  background-color: rgba(30, 30, 34, {{a_dialog}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background-color: rgba({{surface}}, {{a_dialog}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
@@ -530,30 +551,30 @@
 /* ───────────────────────── Overview e ricerca ───────────────────────── */
 
 .nulla .search-entry {
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: {{ink:0.07}};
+  border: 1px solid {{ink:0.06}};
   box-shadow: none;
 }
 
 .nulla .search-entry:hover {
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
 }
 
 .nulla .search-entry:focus {
-  background-color: rgba(255, 255, 255, 0.10);
+  background-color: {{ink:0.10}};
   border-color: st-transparentize(-st-accent-color, 0.4);
 }
 
 .nulla .search-section-content {
-  background-color: rgba(30, 30, 34, {{a_popup}});
+  background-color: rgba({{surface}}, {{a_popup}});
   border-radius: {{r_lg}}px;
   box-shadow: none;
 }
 
 .nulla .app-folder-dialog {
-  background-color: rgba(30, 30, 34, {{a_folder}});
+  background-color: rgba({{surface}}, {{a_folder}});
   border-radius: {{r_xl}}px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px {{ink:0.08}};
 }
 
 .nulla .app-well-app .overview-icon,
@@ -562,8 +583,9 @@
 }
 
 .nulla .dash-label {
-  background-color: rgba(30, 30, 34, {{a_popup}});
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: {{text:0.92}};
+  background-color: rgba({{surface}}, {{a_popup}});
+  border: 1px solid {{ink:0.10}};
   border-radius: {{r_sm}}px;
   box-shadow: none;
 }
@@ -572,8 +594,8 @@
 
 .nulla #dashtodockContainer #dash .dash-background,
 .nulla #dash .dash-background {
-  background-color: rgba(30, 30, 34, {{a_dock}}) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  background-color: rgba({{surface}}, {{a_dock}}) !important;
+  border: 1px solid {{ink:0.09}} !important;
   border-radius: {{r_dock}}px !important;
   box-shadow: none !important;
 }
@@ -584,7 +606,7 @@
 }
 
 .nulla #dashtodockContainer #dash .dash-separator {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: {{ink:0.08}};
 }
 
 /* ───────────────────────── Orologio sul desktop ─────────────────────────

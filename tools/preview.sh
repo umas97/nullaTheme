@@ -29,6 +29,9 @@ fi
 GTK_THEME="$(clean_env gsettings get org.gnome.desktop.interface gtk-theme)"
 ICON_THEME="$(clean_env gsettings get org.gnome.desktop.interface icon-theme)"
 ACCENT="$(clean_env gsettings get org.gnome.desktop.interface accent-color)"
+# NULLA_PREVIEW_SCHEME=prefer-dark (predefinito) o default = variante chiara.
+SCHEME="${NULLA_PREVIEW_SCHEME:-prefer-dark}"
+if [[ "$SCHEME" != prefer-dark ]]; then GTK_THEME="${GTK_THEME//-dark/}"; fi
 
 mkdir -p "$OUT" "$WORK/home/.local/share/gnome-shell/extensions" "$WORK/home/.vscode/extensions"  # così si prova anche il tema VS Code
 chmod 700 "$RUN"
@@ -47,6 +50,7 @@ gsettings set org.gnome.desktop.background picture-uri $(printf %q "$WALLPAPER")
 gsettings set org.gnome.desktop.interface gtk-theme $(printf %q "$GTK_THEME")
 gsettings set org.gnome.desktop.interface icon-theme $(printf %q "$ICON_THEME")
 gsettings set org.gnome.desktop.interface accent-color $(printf %q "$ACCENT")
+gsettings set org.gnome.desktop.interface color-scheme $(printf %q "$SCHEME")
 gsettings set org.gnome.desktop.interface enable-animations false
 gsettings set org.gnome.shell disabled-extensions "['ubuntu-dock@ubuntu.com', 'ding@rastersoft.com']"
 gsettings set org.gnome.shell enabled-extensions "['blur-my-shell@aunetx', 'dash-to-dock@micxgx.gmail.com']"
