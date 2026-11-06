@@ -1,0 +1,100 @@
+/*
+ * Nulla — GTK3 (solo pulsanti finestra; i colori restano quelli di Yaru,
+ * che segue già l'accento di sistema).
+ * File generato dall'estensione Nulla: le modifiche manuali vengono sovrascritte.
+ * Modello: extension/nulla@umas97/theme/gtk3.css.in
+ *
+ * In GTK3 l'icona dei pulsanti è sempre 16px: il cerchio da 13px è quindi
+ * disegnato con un gradiente radiale dentro il pulsante.
+ */
+
+headerbar button.titlebutton,
+.titlebar button.titlebutton,
+headerbar button.titlebutton:hover,
+.titlebar button.titlebutton:hover,
+headerbar button.titlebutton:active,
+.titlebar button.titlebutton:active,
+headerbar button.titlebutton:backdrop,
+.titlebar button.titlebutton:backdrop {
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0 2px;
+  padding: 0;
+  border: none;
+  border-radius: 100%;
+  box-shadow: none;
+  outline: none;
+  color: transparent;
+  -gtk-icon-shadow: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* un solo strato (il cerchio) a riposo; due strati (simbolo + cerchio) al passaggio */
+  background-size: 16px 16px;
+}
+
+headerbar button.titlebutton:hover,
+.titlebar button.titlebutton:hover,
+headerbar button.titlebutton:active,
+.titlebar button.titlebutton:active {
+  background-size: 9px 9px, 16px 16px;
+}
+
+headerbar button.titlebutton.close,
+.titlebar button.titlebutton.close {
+  background-image: radial-gradient(circle, #ff5f57 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.minimize,
+.titlebar button.titlebutton.minimize {
+  background-image: radial-gradient(circle, #febc2e 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.maximize,
+.titlebar button.titlebutton.maximize {
+  background-image: radial-gradient(circle, #28c840 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+/* Finestra non attiva: cerchi grigi */
+headerbar button.titlebutton:backdrop,
+.titlebar button.titlebutton:backdrop {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.16) 6.5px, transparent 7px);
+}
+
+/* Mouse sul pulsante: colore più chiaro e simbolo */
+headerbar button.titlebutton.close:hover,
+.titlebar button.titlebutton.close:hover {
+  background-image: url("nulla-assets/close.svg"),
+                    radial-gradient(circle, #ff8f89 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.minimize:hover,
+.titlebar button.titlebutton.minimize:hover {
+  background-image: url("nulla-assets/minimize.svg"),
+                    radial-gradient(circle, #ffd36b 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.maximize:hover,
+.titlebar button.titlebutton.maximize:hover {
+  background-image: url("nulla-assets/maximize.svg"),
+                    radial-gradient(circle, #5fdc72 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+/* Clic: colore più scuro */
+headerbar button.titlebutton.close:active,
+.titlebar button.titlebutton.close:active {
+  background-image: url("nulla-assets/close.svg"),
+                    radial-gradient(circle, #d9423b 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.minimize:active,
+.titlebar button.titlebutton.minimize:active {
+  background-image: url("nulla-assets/minimize.svg"),
+                    radial-gradient(circle, #d99a12 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}
+
+headerbar button.titlebutton.maximize:active,
+.titlebar button.titlebutton.maximize:active {
+  background-image: url("nulla-assets/maximize.svg"),
+                    radial-gradient(circle, #1ea432 6px, rgba(0, 0, 0, 0.14) 6.5px, transparent 7px);
+}

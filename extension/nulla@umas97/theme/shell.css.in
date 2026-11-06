@@ -1,0 +1,727 @@
+/*
+ * Nulla — GNOME Shell
+ * Modello: i segnaposto {{…}} vengono sostituiti dall'estensione.
+ * Ogni regola parte da `.nulla` (classe aggiunta a Main.uiGroup):
+ * vince su Yaru senza riscriverlo e sparisce disattivando l'estensione.
+ * L'accento è sempre -st-accent-color (Impostazioni → Aspetto).
+ *
+ * "Vetro" = tinta scura semi-trasparente (sopra la sfocatura di Blur my Shell)
+ *          + bordo chiaro sottilissimo.
+ */
+
+/* ───────────────────────── Barra superiore: pillola flottante ───────────────────────── */
+
+.nulla #panel,
+.nulla #panel:overview {
+  background-color: rgba(18, 18, 21, {{a_panel}}) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: {{r_panel}}px;
+  /* stesso spazio sopra e sotto: le finestre massimizzate iniziano dopo il margine */
+  margin: 6px 8px 6px 8px;
+  height: {{panel_h}}px;
+  padding: 0 3px;
+  box-shadow: none !important;
+}
+
+/* Schermata di blocco/accesso: nessuna pillola */
+.nulla #panel.unlock-screen,
+.nulla #panel.login-screen {
+  background-color: transparent !important;
+  border-color: transparent;
+}
+
+.nulla #panel .panel-button {
+  font-weight: normal !important;
+  color: rgba(255, 255, 255, 0.92);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.nulla #panel .panel-button:hover,
+.nulla #panel .panel-button:focus {
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.nulla #panel .panel-button:active,
+.nulla #panel .panel-button:checked {
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.nulla #panel .panel-button.clock-display .clock,
+.nulla #panel .panel-button.clock-display:hover .clock,
+.nulla #panel .panel-button.clock-display:active .clock,
+.nulla #panel .panel-button.clock-display:checked .clock {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+/* Campanella (al posto di data e ora): Yaru toglie lo sfondo al pulsante
+   dell'orologio con !important, qui lo rimettiamo per l'hover. */
+.nulla #panel .panel-button.nulla-bell-button {
+  border: 3px solid transparent !important;
+}
+
+.nulla #panel .panel-button.nulla-bell-button:hover,
+.nulla #panel .panel-button.nulla-bell-button:focus {
+  background-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.nulla #panel .panel-button.nulla-bell-button:active,
+.nulla #panel .panel-button.nulla-bell-button:checked {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Ora nella barra: compare al posto della campanella quando l'orologio
+   sul desktop è coperto. Cifre a larghezza fissa: niente salti al cambio minuto. */
+.nulla .nulla-bar-clock {
+  font-size: 0.95em;
+  font-weight: 500;
+  font-feature-settings: "tnum";
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0 4px;
+}
+
+.nulla .nulla-bell-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  margin-left: 1px;
+  margin-top: 3px;
+  background-color: -st-accent-color;
+}
+
+/* ───────────────────────── App nella barra (al posto della dock) ───────────────────────── */
+
+.nulla .nulla-taskbar {
+  spacing: 2px;
+}
+
+.nulla .nulla-app-button {
+  padding: 2px 7px 0 7px;
+  border-radius: {{r_sm}}px;
+  transition-duration: 150ms;
+}
+
+.nulla .nulla-app-button:hover,
+.nulla .nulla-app-button:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.nulla .nulla-app-button:active {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Segnaposto mentre si trascina un'icona nella barra */
+.nulla .nulla-app-placeholder {
+  width: {{panel_icon}}px;
+  height: {{panel_icon}}px;
+  margin: 0 7px;
+  border-radius: {{r_sm}}px;
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.nulla .nulla-app-icon {
+  icon-size: {{panel_icon}}px;
+}
+
+.nulla .nulla-app-dot {
+  width: 4px;
+  height: 3px;
+  margin-top: 2px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.nulla .nulla-app-button.focused .nulla-app-dot {
+  width: 10px;
+  background-color: -st-accent-color;
+}
+
+/* ───────────────────────── Menu a comparsa ───────────────────────── */
+
+.nulla .popup-menu-content,
+.nulla .candidate-popup-content {
+  background-color: rgba(30, 30, 34, {{a_popup}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r}}px;
+  box-shadow: none;
+  padding: 5px;
+}
+
+.nulla .popup-menu-item {
+  border-radius: {{r_sm}}px;
+  padding: 7px 10px;
+}
+
+.nulla .popup-menu-item:hover,
+.nulla .popup-menu-item:focus,
+.nulla .popup-menu-item.selected {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nulla .popup-menu-item:active,
+.nulla .popup-menu-item:checked {
+  background-color: rgba(255, 255, 255, 0.13);
+}
+
+.nulla .popup-sub-menu {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: none;
+  border-radius: 0 0 {{r_sm}}px {{r_sm}}px;
+}
+
+.nulla .popup-separator-menu-item .popup-separator-menu-item-separator {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+/* ───────────────────────── Impostazioni rapide: Control Center ───────────────────────── */
+
+.nulla .quick-settings {
+  background-color: rgba(30, 30, 34, {{a_popup}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_xl}}px;
+  padding: 16px;
+}
+
+/* Pulsanti tondi della riga in alto (screenshot, impostazioni, blocco, …) */
+.nulla .quick-settings .icon-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  border: none;
+}
+
+.nulla .quick-settings .icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.nulla .quick-slider .icon-button.flat,
+.nulla .quick-slider .icon-button.flat:hover {
+  background-color: transparent;
+}
+
+/* Toggle (anche nella versione con testo, se i toggle a icone sono disattivati) */
+.nulla .quick-settings .quick-toggle,
+.nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  border: none;
+}
+
+.nulla .quick-settings .quick-toggle:hover,
+.nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.nulla .quick-settings .quick-toggle:checked,
+.nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:checked {
+  background-color: -st-accent-color;
+  color: -st-accent-fg-color;
+}
+
+.nulla .quick-settings .quick-toggle:checked:hover,
+.nulla .quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:checked:hover {
+  background-color: st-lighten(-st-accent-color, 6%);
+}
+
+.nulla .quick-settings .quick-toggle-has-menu .quick-toggle-separator {
+  background-color: rgba(0, 0, 0, 0.18);
+}
+
+/* Toggle a icona: il pulsante (largo quanto la cella della griglia) è
+   trasparente, il cerchio è disegnato attorno all'icona: resta tondo qualunque
+   sia la larghezza del pannello. Colore solo quando attivo. */
+.nulla .quick-settings .nulla-icon-toggle,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle {
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  border-radius: 999px;
+}
+
+/* Il pulsante non deve MAI colorarsi, in nessuno stato (hover, focus, attivo,
+   premuto…): !important batte sia le regole dei toggle con testo sia quelle di
+   focus di Yaru (anch'esse !important ma meno specifiche). */
+.nulla .quick-settings .nulla-icon-toggle,
+.nulla .quick-settings .nulla-icon-toggle:hover,
+.nulla .quick-settings .nulla-icon-toggle:focus,
+.nulla .quick-settings .nulla-icon-toggle:active,
+.nulla .quick-settings .nulla-icon-toggle:checked,
+.nulla .quick-settings .nulla-icon-toggle:checked:hover,
+.nulla .quick-settings .nulla-icon-toggle:checked:focus,
+.nulla .quick-settings .nulla-icon-toggle:checked:active,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:hover,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:focus,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:active,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked:hover,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked:focus,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.nulla .quick-settings .quick-toggle.nulla-icon-toggle > StBoxLayout,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle > StBoxLayout {
+  padding: 0;
+}
+
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle-icon {
+  icon-size: 18px;
+  padding: 16px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.09);
+  transition-duration: 150ms;
+}
+
+.nulla .quick-settings .nulla-icon-toggle:hover .quick-toggle-icon {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nulla .quick-settings .quick-toggle.nulla-icon-toggle:checked .quick-toggle-icon,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked .quick-toggle-icon {
+  color: -st-accent-fg-color;
+  background-color: -st-accent-color;
+}
+
+.nulla .quick-settings .quick-toggle.nulla-icon-toggle:checked:hover .quick-toggle-icon,
+.nulla .quick-settings .nulla-icon-toggle .quick-toggle:checked:hover .quick-toggle-icon {
+  background-color: st-lighten(-st-accent-color, 6%);
+}
+
+.nulla .quick-toggle-menu {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+/* Modifica dei toggle (matita in fondo, stile Android) */
+.nulla .nulla-qs-edit-row {
+  padding: 2px 0 0 4px;
+  spacing: 8px;
+}
+
+.nulla .quick-settings .nulla-qs-edit-button {
+  padding: 8px;
+  background-color: transparent;
+}
+
+.nulla .quick-settings .nulla-qs-edit-button:hover {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.nulla .nulla-qs-editing .nulla-qs-edit-button {
+  color: -st-accent-fg-color;
+  background-color: -st-accent-color;
+}
+
+.nulla .nulla-qs-edit-hint {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.50);
+}
+
+.nulla .nulla-qs-hidden-header {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.50);
+  padding: 10px 4px 2px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Durante la modifica i toggle "respirano" un po' e il bersaglio si evidenzia */
+.nulla .nulla-qs-editing .nulla-icon-toggle .quick-toggle-icon {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.nulla .quick-settings .nulla-qs-drop-target .quick-toggle-icon,
+.nulla .quick-settings .quick-toggle.nulla-qs-drop-target {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+}
+
+/* Slider: traccia sottile, maniglia piccola */
+.nulla .slider {
+  color: #f2f2f2;
+  -barlevel-height: 3px;
+  -barlevel-background-color: rgba(255, 255, 255, 0.12);
+  -barlevel-active-background-color: -st-accent-color;
+  -slider-handle-radius: 7px;
+}
+
+/* ───────────────────────── Calendario ───────────────────────── */
+
+.nulla .datemenu-popover {
+  border-radius: {{r_xl}}px;
+}
+
+.nulla .datemenu-today-button,
+.nulla .datemenu-today-button:hover,
+.nulla .datemenu-today-button:focus {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.nulla .calendar {
+  background-color: transparent;
+  border: none;
+}
+
+.nulla .calendar .calendar-month-header .calendar-month-label,
+.nulla .calendar .calendar-month-header .pager-button {
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.nulla .calendar .calendar-month-header .pager-button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nulla .calendar .calendar-day-heading,
+.nulla .calendar .calendar-day-heading:hover {
+  background-color: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.40);
+}
+
+/* Giorni: solo numeri, niente riquadri */
+.nulla .calendar .calendar-day {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.nulla .calendar .calendar-day:hover,
+.nulla .calendar .calendar-day:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nulla .calendar .calendar-day:selected {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.nulla .calendar .calendar-day.calendar-no-work {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.nulla .calendar .calendar-day.calendar-other-month,
+.nulla .calendar .calendar-day.calendar-other-month-day {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+/* Oggi: cerchio color accento */
+.nulla .calendar .calendar-day.calendar-today,
+.nulla .calendar .calendar-day.calendar-today:hover,
+.nulla .calendar .calendar-day.calendar-today:focus,
+.nulla .calendar .calendar-day.calendar-today:selected {
+  background-color: -st-accent-color;
+  color: -st-accent-fg-color;
+  font-weight: bold;
+}
+
+.nulla .calendar .calendar-week-number {
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.30);
+}
+
+/* ───────────────────────── Notifiche: card di vetro ───────────────────────── */
+
+.nulla .message-list {
+  border-color: transparent;
+}
+
+.nulla .message {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .message:hover {
+  background-color: rgba(255, 255, 255, 0.11);
+}
+
+.nulla .message:second-in-stack,
+.nulla .message:lower-in-stack {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.nulla .message-list-placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.nulla .message-list-controls .message-list-clear-button {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.nulla .message-list-controls .message-list-clear-button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.nulla .notification-banner,
+.nulla .notification-banner:hover {
+  background-color: rgba(30, 30, 34, {{a_notification}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .events-button,
+.nulla .world-clocks-button,
+.nulla .weather-button {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: none;
+  box-shadow: none;
+  border-radius: {{r}}px;
+}
+
+/* ───────────────────────── OSD, selettori, dialoghi ───────────────────────── */
+
+.nulla .osd-window,
+.nulla .resize-popup {
+  background-color: rgba(30, 30, 34, {{a_osd}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .switcher-list,
+.nulla .workspace-switcher {
+  background-color: rgba(30, 30, 34, {{a_osd}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .switcher-list .item-box {
+  border-radius: {{r}}px;
+}
+
+.nulla .switcher-list .item-box:selected {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.nulla .modal-dialog,
+.nulla .run-dialog {
+  background-color: rgba(30, 30, 34, {{a_dialog}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .modal-dialog .modal-dialog-button-box .modal-dialog-button {
+  border-radius: {{r}}px;
+}
+
+/* ───────────────────────── Overview e ricerca ───────────────────────── */
+
+.nulla .search-entry {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.nulla .search-entry:hover {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.nulla .search-entry:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: st-transparentize(-st-accent-color, 0.4);
+}
+
+.nulla .search-section-content {
+  background-color: rgba(30, 30, 34, {{a_popup}});
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.nulla .app-folder-dialog {
+  background-color: rgba(30, 30, 34, {{a_folder}});
+  border-radius: {{r_xl}}px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.nulla .app-well-app .overview-icon,
+.nulla .overview-tile {
+  border-radius: {{r_lg}}px;
+}
+
+.nulla .dash-label {
+  background-color: rgba(30, 30, 34, {{a_popup}});
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_sm}}px;
+  box-shadow: none;
+}
+
+/* ───────────────────────── Dock (se Dash to Dock resta attiva) ───────────────────────── */
+
+.nulla #dashtodockContainer #dash .dash-background,
+.nulla #dash .dash-background {
+  background-color: rgba(30, 30, 34, {{a_dock}}) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: {{r_dock}}px !important;
+  box-shadow: none !important;
+}
+
+.nulla #dashtodockContainer.extended #dash .dash-background {
+  border-radius: 0 !important;
+  border-width: 0 !important;
+}
+
+.nulla #dashtodockContainer #dash .dash-separator {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ───────────────────────── Orologio sul desktop ─────────────────────────
+ * Base comune + un blocco per preset (.nulla-clock-<nome>).
+ * Misure in em rispetto al segnaposto "clock_font" (16px = dimensione 100%).
+ * .nulla-clock-dark = sfondo chiaro sotto il widget → testo scuro.
+ */
+
+.nulla .nulla-clock {
+  /* Base della dimensione (slider "Dimensione"): tutte le misure sotto sono in em */
+  font-size: {{clock_font}}px;
+  spacing: 0;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.nulla .nulla-clock-time {
+  font-size: 4.75em;
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.28);
+}
+
+.nulla .nulla-clock-weekday {
+  font-size: 2.5em;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.28);
+}
+
+.nulla .nulla-clock-date {
+  font-size: 1.0625em;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.30);
+}
+
+.nulla .nulla-clock-dial {
+  width: 8.25em;
+  height: 8.25em;
+  margin-bottom: 0.75em;
+  color: rgba(255, 255, 255, 0.95);
+  -nulla-hand-accent: -st-accent-color;
+}
+
+/* Sfondo chiaro: testo scuro */
+.nulla .nulla-clock-dark .nulla-clock-time,
+.nulla .nulla-clock-dark .nulla-clock-weekday {
+  color: rgba(14, 14, 16, 0.90);
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.30);
+}
+
+.nulla .nulla-clock-dark .nulla-clock-date {
+  color: rgba(14, 14, 16, 0.75);
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.30);
+}
+
+.nulla .nulla-clock-dark .nulla-clock-dial {
+  color: rgba(14, 14, 16, 0.90);
+}
+
+/* Sottile: enorme e leggerissimo, data maiuscola spaziata */
+.nulla .nulla-clock-thin .nulla-clock-time {
+  font-size: 6.75em;
+  font-weight: 100;
+}
+
+.nulla .nulla-clock-thin .nulla-clock-date {
+  font-size: 0.75em;
+  font-weight: 500;
+  margin-top: 0.125em;
+}
+
+/* Deciso: compatto e pieno */
+.nulla .nulla-clock-bold .nulla-clock-time {
+  font-size: 3.875em;
+  font-weight: 800;
+}
+
+.nulla .nulla-clock-bold .nulla-clock-date {
+  font-size: 0.9375em;
+  font-weight: 600;
+}
+
+/* Impilato: ore sopra, minuti sotto */
+.nulla .nulla-clock-stacked .nulla-clock-time {
+  font-size: 5.25em;
+  font-weight: 300;
+}
+
+.nulla .nulla-clock-stacked .nulla-clock-date {
+  margin-top: 0.25em;
+}
+
+/* Elegante: il giorno in evidenza, ora nella riga sotto */
+.nulla .nulla-clock-elegant .nulla-clock-date {
+  font-size: 1em;
+  margin-top: 0.125em;
+}
+
+/* Pillola: una riga dentro una capsula di vetro */
+.nulla .nulla-clock-pill {
+  background-color: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.625em 1.375em;
+}
+
+.nulla .nulla-clock-pill .nulla-clock-date {
+  font-size: 1.0625em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: none;
+}
+
+.nulla .nulla-clock-pill.nulla-clock-dark {
+  background-color: rgba(255, 255, 255, 0.40);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.nulla .nulla-clock-pill.nulla-clock-dark .nulla-clock-date {
+  color: rgba(14, 14, 16, 0.88);
+}
+
+/* Analogico: data sotto il quadrante */
+.nulla .nulla-clock-analog .nulla-clock-date {
+  font-size: 0.9375em;
+}
+
+/* Accento: i minuti nel colore d'accento (dopo le regole "dark", così vincono) */
+.nulla .nulla-clock-accent .nulla-clock-minutes,
+.nulla .nulla-clock-accent.nulla-clock-dark .nulla-clock-minutes {
+  color: -st-accent-color;
+}
+
+/* Orologio sulla schermata di blocco: stesso preset, più grande, sempre chiaro
+   (lo sfondo è sfocato e scurito da GNOME). */
+.nulla .nulla-clock.nulla-clock-lock {
+  font-size: {{clock_lock_font}}px;
+}
+

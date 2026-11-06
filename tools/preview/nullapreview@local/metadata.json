@@ -1,0 +1,10 @@
+{
+  "uuid": "nullapreview@local",
+  "name": "Nulla preview",
+  "description": "Solo per tools/preview.sh: apre menu e finestre demo, scatta screenshot ed esce. Non installarla nella sessione reale.",
+  "shell-version": [
+    "48",
+    "49",
+    "50"
+  ]
+}

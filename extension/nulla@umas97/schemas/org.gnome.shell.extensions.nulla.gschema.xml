@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.nulla" path="/org/gnome/shell/extensions/nulla/">
+    <key name="transparency" type="i">
+      <range min="0" max="100"/>
+      <default>40</default>
+      <summary>Trasparenza</summary>
+      <description>Quantità di trasparenza di shell e barre delle app (0 = opaco, 100 = massima).</description>
+    </key>
+    <key name="radius" type="i">
+      <range min="0" max="24"/>
+      <default>12</default>
+      <summary>Raggio degli angoli</summary>
+      <description>Raggio base degli angoli in pixel; gli altri raggi del tema ne derivano.</description>
+    </key>
+    <key name="apply-gtk" type="b">
+      <default>true</default>
+      <summary>Applica il tema alle app GTK</summary>
+      <description>Scrive ~/.config/gtk-4.0/nulla.css e ~/.config/gtk-3.0/nulla.css.</description>
+    </key>
+    <key name="apply-vscode" type="b">
+      <default>true</default>
+      <summary>Tema per VS Code</summary>
+      <description>Tema "Nulla" con l'accento di sistema, barra del titolo di GNOME e menu nella barra di VS Code. Disattivato: rimette le impostazioni di prima.</description>
+    </key>
+    <key name="apply-chrome" type="b">
+      <default>true</default>
+      <summary>Tema GTK per Chrome</summary>
+      <description>Imposta Chrome sul tema GTK (pulsanti finestra e colori di Nulla); si applica a Chrome chiuso. Disattivato: rimette il tema di prima.</description>
+    </key>
+    <key name="sync-blur" type="b">
+      <default>true</default>
+      <summary>Allinea Blur my Shell</summary>
+      <description>Imposta i raggi degli angoli della sfocatura di Blur my Shell uguali a quelli del tema.</description>
+    </key>
+    <key name="app-transparency-enabled" type="b">
+      <default>true</default>
+      <summary>Trasparenza delle finestre</summary>
+      <description>Barra del titolo e sidebar delle app semi-trasparenti; se disattivata sono opache.</description>
+    </key>
+    <key name="app-transparency" type="i">
+      <range min="0" max="100"/>
+      <default>40</default>
+      <summary>Quantità di trasparenza delle finestre</summary>
+      <description>Indipendente dalla trasparenza della shell (0 = opaco, 100 = massima).</description>
+    </key>
+    <key name="panel-height" type="i">
+      <range min="24" max="56"/>
+      <default>34</default>
+      <summary>Altezza della barra superiore</summary>
+      <description>Altezza in pixel della barra flottante a pillola.</description>
+    </key>
+    <key name="icon-toggles" type="b">
+      <default>true</default>
+      <summary>Toggle a icone tonde</summary>
+      <description>Impostazioni rapide stile Control Center: toggle a cerchio con sola icona su 4 colonne. Clic destro per il sottomenu.</description>
+    </key>
+    <key name="toggle-editor" type="b">
+      <default>true</default>
+      <summary>Modifica dei toggle</summary>
+      <description>Matita in fondo alle impostazioni rapide per nascondere, aggiungere e riordinare i toggle.</description>
+    </key>
+    <key name="toggle-order" type="as">
+      <default>[]</default>
+      <summary>Ordine dei toggle</summary>
+      <description>Identificativi dei toggle nell'ordine scelto (gestito dalla modalità modifica).</description>
+    </key>
+    <key name="hidden-toggles" type="as">
+      <default>[]</default>
+      <summary>Toggle nascosti</summary>
+      <description>Identificativi dei toggle nascosti (gestito dalla modalità modifica).</description>
+    </key>
+    <key name="panel-apps" type="b">
+      <default>true</default>
+      <summary>App nella barra superiore</summary>
+      <description>Mostra preferite e app aperte al centro della barra; data e ora diventano una campanella a destra.</description>
+    </key>
+    <key name="bar-clock" type="s">
+      <choices>
+        <choice value="smart"/>
+        <choice value="always"/>
+        <choice value="never"/>
+      </choices>
+      <default>'smart'</default>
+      <summary>Ora nella barra</summary>
+      <description>smart: la campanella diventa l'ora quando l'orologio sul desktop non si vede; always: sempre l'ora; never: sempre la campanella.</description>
+    </key>
+    <key name="clock-widget" type="b">
+      <default>true</default>
+      <summary>Orologio sul desktop</summary>
+      <description>Widget minimal con ora e data sopra lo sfondo, colore adattato per restare leggibile.</description>
+    </key>
+    <key name="lock-screen" type="b">
+      <default>true</default>
+      <summary>Schermata di blocco Nulla</summary>
+      <description>Orologio nello stile del desktop, avatar piccolo e password a pillola sulla schermata di blocco.</description>
+    </key>
+    <key name="clock-style" type="s">
+      <choices>
+        <choice value="classic"/>
+        <choice value="thin"/>
+        <choice value="bold"/>
+        <choice value="stacked"/>
+        <choice value="accent"/>
+        <choice value="elegant"/>
+        <choice value="pill"/>
+        <choice value="analog"/>
+      </choices>
+      <default>'classic'</default>
+      <summary>Stile dell'orologio</summary>
+      <description>Preset grafico del widget orologio sul desktop.</description>
+    </key>
+    <key name="clock-size" type="i">
+      <range min="50" max="200"/>
+      <default>100</default>
+      <summary>Dimensione dell'orologio</summary>
+      <description>Percentuale della dimensione predefinita del widget orologio.</description>
+    </key>
+    <key name="clock-position" type="s">
+      <choices>
+        <choice value="top-left"/>
+        <choice value="top-center"/>
+        <choice value="top-right"/>
+        <choice value="center-left"/>
+        <choice value="center"/>
+        <choice value="center-right"/>
+        <choice value="bottom-left"/>
+        <choice value="bottom-center"/>
+        <choice value="bottom-right"/>
+      </choices>
+      <default>'top-left'</default>
+      <summary>Posizione dell'orologio</summary>
+      <description>Una delle 9 posizioni (riga-colonna) sul monitor principale.</description>
+    </key>
+    <key name="show-slider" type="b">
+      <default>true</default>
+      <summary>Mostra lo slider nelle impostazioni rapide</summary>
+      <description>Aggiunge lo slider della trasparenza sotto quello della luminosità.</description>
+    </key>
+  </schema>
+</schemalist>

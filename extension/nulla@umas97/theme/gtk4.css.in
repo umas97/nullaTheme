@@ -1,0 +1,161 @@
+/*
+ * Nulla — GTK4 / libadwaita
+ * File generato dall'estensione Nulla: le modifiche manuali vengono sovrascritte.
+ * Modello: extension/nulla@umas97/theme/gtk4.css.in
+ *
+ * L'accento NON è definito qui: resta quello scelto in Impostazioni → Aspetto.
+ */
+
+/* ───────────── Palette: solo variabili, nessun selettore invasivo ───────────── */
+
+:root {
+  --window-radius: {{r}}px;
+
+  /* Sfondo della finestra (e quindi delle barre del titolo "piatte"):
+     semi-trasparente secondo lo slider. */
+  --window-bg-color: rgb(22 22 25 / {{a_gtkWindow}});
+  --window-fg-color: rgb(255 255 255 / 92%);
+
+  /* Barre del titolo "rialzate" e app GTK4 senza libadwaita */
+  --headerbar-bg-color: rgb(22 22 25 / {{a_gtkWindow}});
+  --headerbar-backdrop-color: rgb(22 22 25 / {{a_gtkWindow}});
+  --headerbar-shade-color: rgb(0 0 0 / 18%);
+  --headerbar-darker-shade-color: rgb(0 0 0 / 30%);
+
+  /* Sidebar: una velatura leggerissima sopra lo sfondo trasparente */
+  --sidebar-bg-color: rgb(255 255 255 / 3%);
+  --sidebar-backdrop-color: rgb(255 255 255 / 2%);
+  --sidebar-border-color: rgb(255 255 255 / 5%);
+  --sidebar-shade-color: rgb(0 0 0 / 15%);
+  --secondary-sidebar-bg-color: rgb(255 255 255 / 2%);
+  --secondary-sidebar-backdrop-color: rgb(255 255 255 / 1%);
+  --secondary-sidebar-border-color: rgb(255 255 255 / 5%);
+
+  /* Contenuto: liste, testo, griglie di file restano leggibili (quasi opachi) */
+  --view-bg-color: rgb(18 18 21 / {{a_gtkContent}});
+  --card-bg-color: rgb(34 34 38 / {{a_gtkCard}});
+  --card-shade-color: rgb(0 0 0 / 20%);
+  --thumbnail-bg-color: rgb(34 34 38);
+
+  /* Elementi flottanti */
+  --dialog-bg-color: rgb(28 28 31 / {{a_gtkPopover}});
+  --popover-bg-color: rgb(30 30 34 / {{a_gtkPopover}});
+  --popover-shade-color: rgb(0 0 0 / 25%);
+
+  --shade-color: rgb(0 0 0 / 20%);
+  --overview-bg-color: rgb(18 18 21);
+}
+
+/* Contenuto opaco, barre trasparenti.
+   In AdwToolbarView il contenuto è sempre il primo figlio, le barre (.top-bar,
+   .bottom-bar) vengono dopo: diamo uno sfondo solo al contenuto, così sotto le
+   barre resta visibile lo sfondo semi-trasparente della finestra. */
+toolbarview > :first-child,
+.content-pane {
+  background-color: rgb(18 18 21 / {{a_gtkContent}});
+}
+
+/* …tranne dentro la sidebar, che resta velata… */
+.sidebar-pane toolbarview > :first-child {
+  background-color: transparent;
+}
+
+/* …e tranne quando il contenuto è a sua volta una vista divisa:
+   ci pensano .sidebar-pane e .content-pane al suo interno. */
+toolbarview > navigation-split-view:first-child,
+toolbarview > overlay-split-view:first-child {
+  background-color: transparent;
+}
+
+/* La sidebar annidata non deve sommare due velature */
+.sidebar-pane .sidebar-pane {
+  background-color: transparent;
+}
+
+/* ───────────── Pulsanti finestra stile macOS ───────────── */
+
+windowcontrols {
+  border-spacing: 8px;
+}
+
+windowcontrols.start {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+windowcontrols.end {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+windowcontrols > button,
+windowcontrols > button:hover,
+windowcontrols > button:active,
+windowcontrols > button:backdrop {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: none;
+}
+
+windowcontrols > button > image {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  -gtk-icon-size: 10px;
+  /* l'icona originale resta invisibile: disegniamo noi il simbolo */
+  color: transparent;
+  border-radius: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 9px 9px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 14%);
+  transition: background-color 120ms ease-out;
+}
+
+windowcontrols > button.close > image    { background-color: #ff5f57; }
+windowcontrols > button.minimize > image { background-color: #febc2e; }
+windowcontrols > button.maximize > image { background-color: #28c840; }
+
+/* Finestra non attiva: cerchi grigi, come su macOS */
+windowcontrols > button.close:backdrop > image,
+windowcontrols > button.minimize:backdrop > image,
+windowcontrols > button.maximize:backdrop > image {
+  background-color: rgb(255 255 255 / 16%);
+  box-shadow: none;
+}
+
+/* Mouse sul gruppo: tornano i colori e compaiono i simboli */
+windowcontrols:hover > button.close > image,
+windowcontrols:hover > button.close:backdrop > image {
+  background-color: #ff5f57;
+  background-image: url("nulla-assets/close.svg");
+}
+
+windowcontrols:hover > button.minimize > image,
+windowcontrols:hover > button.minimize:backdrop > image {
+  background-color: #febc2e;
+  background-image: url("nulla-assets/minimize.svg");
+}
+
+windowcontrols:hover > button.maximize > image,
+windowcontrols:hover > button.maximize:backdrop > image {
+  background-color: #28c840;
+  background-image: url("nulla-assets/maximize.svg");
+}
+
+/* Mouse sul singolo pulsante: il colore si schiarisce. Il simbolo è ripetuto
+   qui perché Chrome (GTK4) disegna i pulsanti uno alla volta e non conosce
+   l'hover del gruppo windowcontrols. */
+windowcontrols > button.close:hover > image    { background-color: #ff8f89; background-image: url("nulla-assets/close.svg"); }
+windowcontrols > button.minimize:hover > image { background-color: #ffd36b; background-image: url("nulla-assets/minimize.svg"); }
+windowcontrols > button.maximize:hover > image { background-color: #5fdc72; background-image: url("nulla-assets/maximize.svg"); }
+
+/* Clic: il colore si scurisce */
+windowcontrols > button.close:active > image    { background-color: #d9423b; background-image: url("nulla-assets/close.svg"); }
+windowcontrols > button.minimize:active > image { background-color: #d99a12; background-image: url("nulla-assets/minimize.svg"); }
+windowcontrols > button.maximize:active > image { background-color: #1ea432; background-image: url("nulla-assets/maximize.svg"); }

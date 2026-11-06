@@ -1,0 +1,154 @@
+/*
+ * Nulla — schermata di blocco e schermata di accesso (stili condivisi).
+ * Il segnaposto "scope" vale ".nulla" nella shell (estensione) ed è vuoto per GDM
+ * (tools/gdm/), dove l'estensione non gira.
+ *
+ * Avatar piccolo e tondo, nome sottile, password in una pillola di vetro,
+ * pulsanti tondi di vetro; l'accento solo dove serve.
+ */
+
+/* ───────── Avatar e nome ───────── */
+
+{{scope}} .login-dialog .user-widget.vertical,
+{{scope}} .unlock-dialog .user-widget.vertical {
+  spacing: 14px;
+}
+
+{{scope}} .login-dialog .user-widget.vertical .user-icon,
+{{scope}} .unlock-dialog .user-widget.vertical .user-icon {
+  icon-size: 72px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+{{scope}} .login-dialog .user-widget.vertical .user-icon StIcon,
+{{scope}} .unlock-dialog .user-widget.vertical .user-icon StIcon {
+  padding: 14px;
+}
+
+{{scope}} .login-dialog .user-widget.vertical .user-widget-label,
+{{scope}} .unlock-dialog .user-widget.vertical .user-widget-label {
+  font-size: 1.35em;
+  font-weight: 300;
+  margin-bottom: 0.4em;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ───────── Password: pillola di vetro ───────── */
+
+{{scope}} .login-dialog .login-dialog-prompt-entry,
+{{scope}} .unlock-dialog .login-dialog-prompt-entry {
+  border-radius: 999px;
+  padding: 9px 18px;
+  color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: none !important;
+  caret-color: -st-accent-color;
+  selection-background-color: st-transparentize(-st-accent-color, 0.4);
+}
+
+{{scope}} .login-dialog .login-dialog-prompt-entry:hover,
+{{scope}} .unlock-dialog .login-dialog-prompt-entry:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+{{scope}} .login-dialog .login-dialog-prompt-entry:focus,
+{{scope}} .unlock-dialog .login-dialog-prompt-entry:focus {
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 1px solid st-transparentize(-st-accent-color, 0.25);
+  box-shadow: none !important;
+}
+
+{{scope}} .login-dialog .login-dialog-prompt-entry .hint-text,
+{{scope}} .unlock-dialog .login-dialog-prompt-entry .hint-text,
+{{scope}} .login-dialog StEntry StLabel.hint-text,
+{{scope}} .unlock-dialog StEntry StLabel.hint-text {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ───────── Pulsanti tondi di vetro (annulla, cambia utente, sessione, accessibilità) ───────── */
+
+{{scope}} .login-dialog .login-dialog-button,
+{{scope}} .unlock-dialog .login-dialog-button {
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+{{scope}} .login-dialog .login-dialog-button:hover,
+{{scope}} .login-dialog .login-dialog-button:focus,
+{{scope}} .unlock-dialog .login-dialog-button:hover,
+{{scope}} .unlock-dialog .login-dialog-button:focus {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+{{scope}} .login-dialog .login-dialog-button:active,
+{{scope}} .unlock-dialog .login-dialog-button:active {
+  background-color: rgba(255, 255, 255, 0.24);
+}
+
+{{scope}} .login-dialog .login-dialog-button.default,
+{{scope}} .unlock-dialog .login-dialog-button.default {
+  background-color: -st-accent-color;
+  color: -st-accent-fg-color;
+  border-color: transparent;
+}
+
+/* ───────── Messaggi ───────── */
+
+{{scope}} .login-dialog .login-dialog-message,
+{{scope}} .unlock-dialog .login-dialog-message {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+{{scope}} .login-dialog .login-dialog-message-warning,
+{{scope}} .unlock-dialog .login-dialog-message-warning,
+{{scope}} .login-dialog .caps-lock-warning-label,
+{{scope}} .unlock-dialog .caps-lock-warning-label {
+  color: #ffc861;
+}
+
+/* ───────── Notifiche sulla schermata di blocco ───────── */
+
+{{scope}} .unlock-dialog-notifications-container .unlock-dialog-notification-source {
+  background-color: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+{{scope}} .unlock-dialog-clock .unlock-dialog-clock-hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+
+/* ───────── Elenco utenti (schermata di accesso) ───────── */
+
+{{scope}} .login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item {
+  border-radius: {{r_lg}}px;
+  padding: 10px 14px;
+  background-color: transparent;
+}
+
+{{scope}} .login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:hover,
+{{scope}} .login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+{{scope}} .login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item:selected {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+{{scope}} .login-dialog-user-list-view .login-dialog-user-list .login-dialog-user-list-item .user-icon {
+  icon-size: 48px;
+}
+
+{{scope}} .login-dialog .login-dialog-not-listed-button .login-dialog-not-listed-label {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+
+{{scope}} .login-dialog .login-dialog-banner {
+  color: rgba(255, 255, 255, 0.75);
+}

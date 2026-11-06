@@ -1,0 +1,217 @@
+/*
+ * Nulla — solo schermata di accesso (GDM), aggiunto in fondo al gdm.css di Yaru
+ * da tools/gdm/build-gdm-theme.sh insieme ad auth.css.in (scope vuoto).
+ * In GDM non c'è l'estensione: niente classe .nulla, selettori diretti.
+ */
+
+/* Sfondo: il tuo sfondo del desktop, sfocato e scurito al momento della build
+   (GDM non può leggere i file della tua home: l'immagine è dentro il tema). */
+#lockDialogGroup {
+  background-color: #101012;
+  background-image: url("resource:///org/gnome/shell/theme/nulla-login.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Barra in alto: trasparente, solo testo e icone */
+#panel.login-screen,
+#panel.unlock-screen {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+#panel.login-screen .panel-button {
+  color: rgba(255, 255, 255, 0.90);
+  border-radius: 999px;
+}
+
+#panel.login-screen .panel-button:hover,
+#panel.login-screen .panel-button:focus {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+/* Menu della barra (accessibilità, rete, spegnimento): vetro come nella sessione */
+.login-dialog .popup-menu-content,
+#panel.login-screen .popup-menu-content,
+.popup-menu-content {
+  background-color: rgba(30, 30, 34, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r}}px;
+  box-shadow: none;
+}
+
+.popup-menu-item {
+  border-radius: {{r_sm}}px;
+}
+
+/* ───────── "Non elencato?": pillola di vetro come il campo password ───────── */
+
+.login-dialog-not-listed-button,
+.login-dialog-not-listed-button:hover,
+.login-dialog-not-listed-button:focus,
+.login-dialog-not-listed-button:active,
+.login-dialog-not-listed-button:focus:hover,
+.login-dialog-not-listed-button:active:hover,
+.login-dialog-not-listed-button:active:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  box-shadow: none !important;
+  padding: 4px 16px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.login-dialog-not-listed-button:hover,
+.login-dialog-not-listed-button:focus:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.login-dialog-not-listed-button:focus {
+  border-color: st-transparentize(-st-accent-color, 0.25);
+}
+
+.login-dialog-not-listed-button:active,
+.login-dialog-not-listed-button:active:hover,
+.login-dialog-not-listed-button:active:focus {
+  background-color: rgba(255, 255, 255, 0.20);
+}
+
+.login-dialog-not-listed-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+/* ───────── Impostazioni rapide: vetro e toggle a cerchio, SOLO CSS ─────────
+ * In GDM non c'è il codice di Nulla (griglia a 4 colonne, testo nascosto):
+ * la griglia resta a 2 colonne. Il pannello ha larghezza fissa, così ogni
+ * cella è larga 148px e il cerchio (52px) si centra con il padding sinistro.
+ * Conti: 340 − 2·16 (padding) − 12 (spazio tra colonne) = 296 → 148 per cella.
+ */
+
+.quick-settings {
+  width: 340px;
+  padding: 16px;
+  background-color: rgba(30, 30, 34, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: {{r_xl}}px;
+}
+
+.quick-settings .icon-button {
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  border: none;
+}
+
+.quick-settings .icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Solo i toggle della griglia (figli diretti, o il contenuto dei toggle con
+   sottomenu): la riga in alto (batteria, pulsanti) resta com'è. */
+
+/* Il pulsante non si colora mai: il colore è sul cerchio */
+.quick-settings-grid > .quick-toggle,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle,
+.quick-settings-grid > .quick-toggle:hover,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:hover,
+.quick-settings-grid > .quick-toggle:focus,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:focus,
+.quick-settings-grid > .quick-toggle:active,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:active,
+.quick-settings-grid > .quick-toggle:checked,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:checked,
+.quick-settings-grid > .quick-toggle:checked:hover,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:checked:hover,
+.quick-settings-grid > .quick-toggle:checked:focus,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:checked:focus,
+.quick-settings-grid > .quick-toggle-has-menu,
+.quick-settings-grid > .quick-toggle-has-menu:hover,
+.quick-settings-grid > .quick-toggle-has-menu:checked {
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  border-radius: 999px;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Stesso margine per tutti: i cerchi restano in colonna anche quando a destra
+   c'è la freccia del sottomenu. (148 − 52) / 2 = 48 */
+.quick-settings-grid > .quick-toggle > StBoxLayout,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle > StBoxLayout {
+  padding: 0 0 0 48px !important;
+  spacing: 0;
+}
+
+/* Testo invisibile e a larghezza zero */
+.quick-settings-grid > .quick-toggle .quick-toggle-title,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle .quick-toggle-title,
+.quick-settings-grid > .quick-toggle .quick-toggle-subtitle,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle .quick-toggle-subtitle {
+  width: 0;
+  font-size: 1px;
+  color: transparent;
+}
+
+.quick-settings-grid > .quick-toggle .quick-toggle-icon,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle .quick-toggle-icon {
+  icon-size: 18px;
+  padding: 16px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.09);
+}
+
+.quick-settings-grid > .quick-toggle:hover .quick-toggle-icon,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:hover .quick-toggle-icon {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.quick-settings-grid > .quick-toggle:checked .quick-toggle-icon,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:checked .quick-toggle-icon {
+  color: -st-accent-fg-color;
+  background-color: -st-accent-color;
+}
+
+.quick-settings-grid > .quick-toggle:checked:hover .quick-toggle-icon,
+.quick-settings-grid > .quick-toggle-has-menu .quick-toggle:checked:hover .quick-toggle-icon {
+  background-color: st-lighten(-st-accent-color, 6%);
+}
+
+/* Freccia del sottomenu: discreta, senza sfondo */
+.quick-settings .quick-toggle-has-menu .quick-toggle-separator {
+  width: 0;
+  background-color: transparent;
+}
+
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button,
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:hover,
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:focus,
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:checked,
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:checked:hover {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none;
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.quick-settings .quick-toggle-has-menu .quick-toggle-menu-button:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.quick-toggle-menu {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: {{r_lg}}px;
+  box-shadow: none;
+}
+
+.quick-settings .slider {
+  -barlevel-height: 3px;
+  -barlevel-background-color: rgba(255, 255, 255, 0.12);
+  -barlevel-active-background-color: -st-accent-color;
+  -slider-handle-radius: 7px;
+}

@@ -1,0 +1,10 @@
+{
+  "uuid": "nulla@umas97",
+  "name": "Nulla",
+  "description": "Tema minimal scuro per GNOME Shell e app GTK: trasparenze regolabili dalle impostazioni rapide, accento nativo di GNOME, pulsanti finestra stile macOS.",
+  "shell-version": ["48", "49", "50"],
+  "session-modes": ["user", "unlock-dialog"],
+  "settings-schema": "org.gnome.shell.extensions.nulla",
+  "url": "https://github.com/umas97/nullaTheme",
+  "version": 1
+}
