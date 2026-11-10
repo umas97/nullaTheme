@@ -33,9 +33,10 @@
   --secondary-sidebar-backdrop-color: {{ink:0.01}};
   --secondary-sidebar-border-color: {{ink:0.05}};
 
-  /* Contenuto: liste, testo, griglie di file restano leggibili (quasi opachi) */
-  --view-bg-color: rgba({{view}}, {{a_gtkContent}});
-  --card-bg-color: rgba({{card}}, {{a_gtkCard}});
+  /* Contenuto: liste, testo, griglie di file sempre opachi (leggibilità e
+     consumi: vedi la nota sulle finestre massimizzate più sotto) */
+  --view-bg-color: rgb({{view}});
+  --card-bg-color: rgb({{card}});
   --card-shade-color: {{shade:0.20}};
   --thumbnail-bg-color: rgb({{card}});
 
@@ -54,7 +55,7 @@
    barre resta visibile lo sfondo semi-trasparente della finestra. */
 toolbarview > :first-child,
 .content-pane {
-  background-color: rgba({{view}}, {{a_gtkContent}});
+  background-color: rgb({{view}});
 }
 
 /* …tranne dentro la sidebar, che resta velata… */
@@ -72,6 +73,25 @@ toolbarview > overlay-split-view:first-child {
 /* La sidebar annidata non deve sommare due velature */
 .sidebar-pane .sidebar-pane {
   background-color: transparent;
+}
+
+/* Finestre massimizzate, a schermo intero o affiancate: opache.
+   GTK dichiara la finestra "opaca" al compositor solo se lo sfondo della
+   finestra è pienamente opaco. Una finestra semi-trasparente obbliga GNOME a
+   ridisegnare a ogni frame anche tutto quello che c'è dietro e impedisce la
+   scansione diretta (video e app a schermo intero), con un consumo di batteria
+   molto più alto. Qui dietro ci sarebbe comunque solo lo sfondo del desktop. */
+window.maximized,
+window.fullscreen,
+window.tiled,
+window.tiled-left,
+window.tiled-right,
+window.tiled-top,
+window.tiled-bottom {
+  --window-radius: 0;
+  --window-bg-color: rgb({{window}});
+  --headerbar-bg-color: rgb({{window}});
+  --headerbar-backdrop-color: rgb({{window}});
 }
 
 /* ───────────── Pulsanti finestra stile macOS ───────────── */

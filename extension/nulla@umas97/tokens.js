@@ -58,11 +58,9 @@ const SHELL_WEIGHTS = {
 };
 
 // App GTK4 / libadwaita: lo sfondo finestra si vede solo sotto barre
-// del titolo e sidebar (il contenuto ha uno sfondo proprio, quasi opaco)
+// del titolo e sidebar (contenuto e card restano opachi: vedi gtk4.css.in)
 const APP_WEIGHTS = {
     gtkWindow: 0.70,
-    gtkContent: 0.10,
-    gtkCard: 0.15,
     gtkPopover: 0.08,
 };
 
