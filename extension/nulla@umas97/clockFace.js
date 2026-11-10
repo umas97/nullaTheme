@@ -9,6 +9,7 @@
 import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import GnomeDesktop from 'gi://GnomeDesktop';
 import St from 'gi://St';
 
 import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -69,7 +70,9 @@ export class ClockFace {
         this._settings = settings;
         this._onRestyle = onRestyle;
         this._interface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
-        this._tickId = 0;
+        // WallClock (come la schermata di blocco di GNOME) segue l'ora reale:
+        // dopo una sospensione si aggiorna subito, un timer GLib no.
+        this._wallClock = new GnomeDesktop.WallClock({time_only: true});
         this._now = GLib.DateTime.new_now_local();
 
         this.actor = new St.BoxLayout({
@@ -96,6 +99,7 @@ export class ClockFace {
 
         this._settings.connectObject('changed::clock-style', () => this._applyStyle(), this);
         this._interface.connectObject('changed::clock-format', () => this._tick(), this);
+        this._wallClock.connectObject('notify::clock', () => this._tick(), this);
         this.actor.connect('destroy', () => this._onDestroy());
 
         this._applyStyle();
@@ -113,9 +117,9 @@ export class ClockFace {
     }
 
     _onDestroy() {
-        if (this._tickId)
-            GLib.source_remove(this._tickId);
-        this._tickId = 0;
+        this._wallClock.disconnectObject(this);
+        this._wallClock.run_dispose();
+        this._wallClock = null;
         this._settings.disconnectObject(this);
         this._interface.disconnectObject(this);
         this.actor = null;
@@ -148,9 +152,6 @@ export class ClockFace {
     // ───────────── ora ─────────────
 
     _tick() {
-        if (this._tickId)
-            GLib.source_remove(this._tickId);
-
         const now = this._now = GLib.DateTime.new_now_local();
         const preset = this._preset;
         const twelve = this._interface.get_string('clock-format') === '12h';
@@ -177,14 +178,6 @@ export class ClockFace {
         this._date.text = date;
 
         this._analog.queue_repaint();
-
-        // Prossimo aggiornamento allo scoccare del minuto.
-        this._tickId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT,
-            Math.max(1, 60 - now.get_second()), () => {
-                this._tickId = 0;
-                this._tick();
-                return GLib.SOURCE_REMOVE;
-            });
     }
 
     _drawAnalog(area) {

@@ -7,13 +7,17 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$REPO/tools/common.sh"
 DEST="$DATA_HOME/gnome-shell/extensions/$UUID"
 BACKUP="$DATA_HOME/nulla/backup-originale"
-IMPORT_LINE='@import url("nulla.css");'
+# Percorso assoluto: le app snap vedono gtk.css come collegamento nella propria
+# home, dove un percorso relativo non porterebbe a nulla.css.
+import_line() { printf '@import url("file://%s/%s/nulla.css");' "$CONFIG_HOME" "$1"; }
+OLD_IMPORT_LINE='@import url("nulla.css");'  # versioni precedenti
 
 say "Disabling the extension and turning the dock back on"
 gnome-extensions disable "$UUID" 2>/dev/null || true
-python3 -I - "$UUID" "$DATA_HOME/nulla/riattiva-estensioni" <<'PY'
+python3 -I - "$UUID" "$DATA_HOME/nulla/riattiva-estensioni" "$DATA_HOME/nulla/disattivate-da-nulla" <<'PY'
 import ast, os, subprocess, sys
-uuid, record = sys.argv[1], sys.argv[2]
+uuid, record, added_record = sys.argv[1], sys.argv[2], sys.argv[3]
+DOCKS = ['dash-to-dock@micxgx.gmail.com', 'ubuntu-dock@ubuntu.com']
 def get(key):
     out = subprocess.run(['gsettings', 'get', 'org.gnome.shell', key],
                          capture_output=True, text=True, check=True).stdout.strip()
@@ -21,12 +25,19 @@ def get(key):
 def put(key, items):
     subprocess.run(['gsettings', 'set', 'org.gnome.shell', key, str(items)], check=True)
 restore = open(record).read().split() if os.path.exists(record) else []
+# Dock aggiunte da Nulla a disabled-extensions. Le installazioni precedenti non
+# le annotavano, ma le aggiungevano sempre tutte.
+if os.path.exists(added_record):
+    added = open(added_record).read().split()
+else:
+    added = DOCKS if os.path.exists(record) else []
 enabled = [x for x in get('enabled-extensions') if x != uuid]
 enabled += [x for x in restore if x not in enabled]
 put('enabled-extensions', enabled)
-put('disabled-extensions', [x for x in get('disabled-extensions') if x not in restore])
-if os.path.exists(record):
-    os.remove(record)
+put('disabled-extensions', [x for x in get('disabled-extensions') if x not in restore + added])
+for path in (record, added_record):
+    if os.path.exists(path):
+        os.remove(path)
 PY
 
 say "Removing files"
@@ -35,7 +46,7 @@ for v in gtk-4.0 gtk-3.0; do
     dir="$CONFIG_HOME/$v"
     rm -rf "$dir/nulla.css" "$dir/nulla-assets"
     if [[ -f "$dir/gtk.css" ]]; then
-        grep -vxF "$IMPORT_LINE" "$dir/gtk.css" > "$dir/gtk.css.nulla-tmp" || true
+        grep -vxF -e "$(import_line "$v")" -e "$OLD_IMPORT_LINE" "$dir/gtk.css" > "$dir/gtk.css.nulla-tmp" || true
         mv "$dir/gtk.css.nulla-tmp" "$dir/gtk.css"
         # se gtk.css esisteva solo per Nulla, lo togliamo
         [[ -s "$dir/gtk.css" ]] || rm -f "$dir/gtk.css"
@@ -54,9 +65,9 @@ for app in vscode chrome; do
     esac
 done
 
-if [[ -x "$BACKUP/restore.sh" ]]; then
-    say "Restoring the original settings (dock, Blur my Shell, buttons, color scheme)"
-    "$BACKUP/restore.sh"
+if [[ -f "$BACKUP/restore.sh" ]]; then
+    say "Restoring the settings Nulla changed (dock, Blur my Shell, buttons)"
+    python3 -I "$REPO/tools/restore-settings.py" "$BACKUP"
     rm -rf "$BACKUP"
     rmdir "$DATA_HOME/nulla" 2>/dev/null || true
 else

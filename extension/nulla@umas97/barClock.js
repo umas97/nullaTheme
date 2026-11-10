@@ -10,6 +10,7 @@
 import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import GnomeDesktop from 'gi://GnomeDesktop';
 import Meta from 'gi://Meta';
 import St from 'gi://St';
 
@@ -37,7 +38,8 @@ export class BarClock {
     constructor(bellGicon, settings) {
         this._settings = settings;
         this._interface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
-        this._tickId = 0;
+        // Segue l'ora reale anche dopo una sospensione (vedi clockFace.js).
+        this._wallClock = new GnomeDesktop.WallClock({time_only: true});
         this._laterId = 0;
         this._showTime = null;
         this._clockActor = null;
@@ -58,6 +60,7 @@ export class BarClock {
         this.actor.connect('destroy', () => this._onDestroy());
 
         this._interface.connectObject('changed::clock-format', () => this._tick(), this);
+        this._wallClock.connectObject('notify::clock', () => this._tick(), this);
         this._settings.connectObject('changed::bar-clock', () => {
             this._mode = this._settings.get_string('bar-clock');
             this._update();
@@ -108,9 +111,9 @@ export class BarClock {
     }
 
     _onDestroy() {
-        if (this._tickId)
-            GLib.source_remove(this._tickId);
-        this._tickId = 0;
+        this._wallClock.disconnectObject(this);
+        this._wallClock.run_dispose();
+        this._wallClock = null;
         if (this._laterId)
             global.compositor.get_laters().remove(this._laterId);
         this._laterId = 0;
@@ -133,21 +136,9 @@ export class BarClock {
     // ───────────── ora ─────────────
 
     _tick() {
-        if (this._tickId)
-            GLib.source_remove(this._tickId);
-
         const now = GLib.DateTime.new_now_local();
         const twelve = this._interface.get_string('clock-format') === '12h';
         this._time.text = now.format(twelve ? '%l:%M' : '%H:%M').trim();
-
-        // Prossimo aggiornamento allo scoccare del minuto. Timer in secondi:
-        // GLib lo accorpa agli altri risvegli (come l'orologio sul desktop).
-        this._tickId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT,
-            Math.max(1, 60 - now.get_second()), () => {
-                this._tickId = 0;
-                this._tick();
-                return GLib.SOURCE_REMOVE;
-            });
     }
 
     // ───────────── visibilità dell'orologio sul desktop ─────────────

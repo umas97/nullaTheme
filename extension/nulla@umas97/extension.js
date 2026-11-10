@@ -32,12 +32,19 @@ const STYLE_CLASS = 'nulla';
 const BLUR_UUID = 'blur-my-shell@aunetx';
 const BLUR_POPUP_SCHEMA = 'org.gnome.shell.extensions.blur-my-shell.popup';
 const QS_COLUMNS = 2;
+const QS_WAIT_MS = 200;          // attesa delle impostazioni rapide all'avvio…
+const QS_MAX_WAITS = 50;         // …per al massimo 10 secondi
 
 const SHELL_DEBOUNCE_MS = 60;    // ridisegno della shell mentre si trascina lo slider
 const SAVE_DEBOUNCE_MS = 200;    // scrittura del valore in gsettings
 const FILES_DEBOUNCE_MS = 500;   // file GTK e Blur my Shell (non servono in tempo reale)
 const APP_RETRY_MS = 30 * 60000; // Chrome aperto: si riprova quando si chiude (o, al più, ogni 30 min)
-const APP_CLOSE_DELAY_MS = 2000; // margine perché i processi dell'app finiscano di uscire
+// Dopo la chiusura: margini crescenti perché i processi dell'app finiscano di uscire.
+const APP_CLOSE_DELAYS_MS = [2000, 5000, 15000];
+const APP_IDS = {
+    chrome: ['google-chrome.desktop'],
+    vscode: ['code_code.desktop', 'code.desktop'],
+};
 const APPS_BUSY = 3;             // codice di uscita di apps.py: app aperta
 
 const TransparencySlider = GObject.registerClass(
@@ -116,12 +123,12 @@ export default class NullaExtension extends Extension {
             'changed::radius', () => this._onSettingsChanged(),
             'changed::panel-height', () => this._onSettingsChanged(),
             'changed::clock-size', () => this._onSettingsChanged(),
-            'changed::apply-gtk', () => this._debounce('files', FILES_DEBOUNCE_MS, () => this._writeGtk()),
-            'changed::app-transparency', () => this._debounce('files', FILES_DEBOUNCE_MS, () => this._writeGtk()),
-            'changed::app-transparency-enabled', () => this._debounce('files', FILES_DEBOUNCE_MS, () => this._writeGtk()),
-            'changed::apply-vscode', () => this._debounce('vscode', FILES_DEBOUNCE_MS, () => this._syncVscode()),
+            'changed::apply-gtk', () => this._debounce('gtk', FILES_DEBOUNCE_MS, () => this._writeGtk()),
+            'changed::app-transparency', () => this._debounce('gtk', FILES_DEBOUNCE_MS, () => this._writeGtk()),
+            'changed::app-transparency-enabled', () => this._debounce('gtk', FILES_DEBOUNCE_MS, () => this._writeGtk()),
+            'changed::apply-vscode', () => this._debounce('vscode-apps', FILES_DEBOUNCE_MS, () => this._syncVscode()),
             'changed::apply-chrome', () => this._debounce('chrome', FILES_DEBOUNCE_MS, () => this._runApps('chrome')),
-            'changed::sync-blur', () => this._debounce('files', FILES_DEBOUNCE_MS, () => this._syncBlur()),
+            'changed::sync-blur', () => this._debounce('blur', FILES_DEBOUNCE_MS, () => this._syncBlur()),
             'changed::show-slider', () => this._syncSlider(),
             'changed::icon-toggles', () => this._syncFeature('icon-toggles'),
             'changed::toggle-editor', () => this._syncFeature('toggle-editor'),
@@ -137,9 +144,11 @@ export default class NullaExtension extends Extension {
         // L'accento effettivo lo fornisce St.ThemeContext; il cambio lo notifica St.Settings.
         this._themeContext = St.ThemeContext.get_for_stage(global.stage);
         St.Settings.get().connectObject('notify::accent-color',
-            () => this._debounce('vscode', FILES_DEBOUNCE_MS, () => this._writeVscodeTheme()), this);
+            () => this._debounce('vscode-theme', FILES_DEBOUNCE_MS, () => this._writeVscodeTheme()), this);
         this._appsCancellable = new Gio.Cancellable();
         this._appWatches = new Map();
+        this._closeRetries = new Map(); // app → tentativi dopo la chiusura
+        this._sliderWaits = 0;
         this._syncVscode();
         // A ogni accesso, perché Chrome Sync può rimettere il tema dell'account.
         this._runApps('chrome');
@@ -155,6 +164,8 @@ export default class NullaExtension extends Extension {
             'lock-screen': () => new LockScreen(this._settings),
         };
         this._features = new Map();
+        this._featureWaits = new Map();
+        Main.sessionMode.connectObject('updated', () => this._syncSlider(), this);
         for (const key of Object.keys(this._featureFactories))
             this._syncFeature(key);
     }
@@ -168,10 +179,16 @@ export default class NullaExtension extends Extension {
             GLib.source_remove(id);
         this._timeouts.clear();
 
-        for (const feature of this._features.values())
-            feature.disable();
+        for (const [key, feature] of this._features) {
+            try {
+                feature.disable();
+            } catch (e) {
+                console.error(`[Nulla] ${key} disable: ${e.message}`);
+            }
+        }
         this._features = null;
 
+        Main.sessionMode.disconnectObject(this);
         this._removeSlider();
         this._settings.disconnectObject(this);
         this._interface.disconnectObject(this);
@@ -192,6 +209,7 @@ export default class NullaExtension extends Extension {
         // disattivata. Li rimuove ./uninstall.sh.
         this._settings = null;
         this._timeouts = null;
+        this._templates = null;
     }
 
     // ───────────── impostazioni → tema ─────────────
@@ -213,10 +231,8 @@ export default class NullaExtension extends Extension {
     _onSettingsChanged() {
         this._previewTransparency = null;
         this._debounce('shell', SHELL_DEBOUNCE_MS, () => this._rebuildShell());
-        this._debounce('files', FILES_DEBOUNCE_MS, () => {
-            this._writeGtk();
-            this._syncBlur();
-        });
+        this._debounce('gtk', FILES_DEBOUNCE_MS, () => this._writeGtk());
+        this._debounce('blur', FILES_DEBOUNCE_MS, () => this._syncBlur());
     }
 
     _preview(transparency) {
@@ -242,11 +258,17 @@ export default class NullaExtension extends Extension {
     // ───────────── GNOME Shell ─────────────
 
     _rebuildShell() {
+        // I modelli si leggono una volta: mentre si trascina lo slider si
+        // ricostruisce il foglio ogni 60 ms.
         const themeDir = this.dir.get_child('theme');
+        this._templates ??= {
+            shell: readText(themeDir.get_child('shell.css.in')),
+            auth: readText(themeDir.get_child('auth.css.in')),
+        };
         const tokens = this._tokens();
         // Shell + stili di blocco/accesso (condivisi con GDM, qui con scope .nulla)
-        const css = render(readText(themeDir.get_child('shell.css.in')), tokens) + '\n' +
-            render(readText(themeDir.get_child('auth.css.in')), {...tokens, scope: '.nulla'});
+        const css = render(this._templates.shell, tokens) + '\n' +
+            render(this._templates.auth, {...tokens, scope: '.nulla'});
 
         // Un nome nuovo a ogni generazione evita qualsiasi cache di St.
         this._generation++;
@@ -309,16 +331,25 @@ export default class NullaExtension extends Extension {
     /** Applica o toglie il tema all'app secondo l'interruttore (vedi apps.py). */
     _runApps(app) {
         const action = this._settings.get_boolean(`apply-${app}`) ? 'apply' : 'restore';
-        const proc = Gio.Subprocess.new(
-            ['python3', '-I', this.dir.get_child('apps.py').get_path(), app, action],
-            Gio.SubprocessFlags.STDERR_PIPE);
+        let proc;
+        try {
+            proc = Gio.Subprocess.new(
+                ['python3', '-I', this.dir.get_child('apps.py').get_path(), app, action],
+                Gio.SubprocessFlags.STDERR_PIPE);
+        } catch (e) {
+            console.warn(`[Nulla] ${app} ${action}: ${e.message}`);
+            return;
+        }
         proc.communicate_utf8_async(null, this._appsCancellable, (_p, res) => {
             try {
                 const [, , stderr] = proc.communicate_utf8_finish(res);
                 const status = proc.get_exit_status();
-                if (status === APPS_BUSY)
+                if (status === APPS_BUSY) {
                     this._retryWhenClosed(app);
-                else if (status !== 0)
+                    return;
+                }
+                this._closeRetries.delete(app);
+                if (status !== 0)
                     console.warn(`[Nulla] ${app} ${action}: uscita ${status} ${stderr}`);
             } catch (e) {
                 if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
@@ -329,20 +360,34 @@ export default class NullaExtension extends Extension {
 
     /**
      * App aperta: invece di rilanciare apps.py a intervalli fissi si aspetta
-     * che GNOME la segnali chiusa. Il timer lungo copre Chrome rimasto in
+     * che GNOME la segnali chiusa. Se i processi stanno ancora uscendo si
+     * riprova dopo qualche secondo; il timer lungo copre Chrome rimasto in
      * background senza finestre (per GNOME è già "chiuso").
      */
     _retryWhenClosed(app) {
-        const appSystem = Shell.AppSystem.get_default();
         const retry = () => {
             this._unwatchApp(app);
             this._runApps(app);
         };
         this._unwatchApp(app);
+
+        // Appena chiusa ma ancora occupata: attese crescenti, poi si torna ad aspettare.
+        const attempt = this._closeRetries.get(app);
+        if (attempt !== undefined && attempt < APP_CLOSE_DELAYS_MS.length) {
+            this._closeRetries.set(app, attempt + 1);
+            this._debounce(app, APP_CLOSE_DELAYS_MS[attempt], retry);
+            return;
+        }
+        this._closeRetries.delete(app);
+
         this._debounce(app, APP_RETRY_MS, retry);
-        this._appWatches.set(app, appSystem.connect('app-state-changed', (_s, shellApp) => {
-            if (shellApp.state === Shell.AppState.STOPPED && shellApp.get_id().includes(app))
-                this._debounce(app, APP_CLOSE_DELAY_MS, retry);
+        const ids = APP_IDS[app] ?? [];
+        this._appWatches.set(app, Shell.AppSystem.get_default().connect('app-state-changed', (_s, shellApp) => {
+            if (shellApp.state === Shell.AppState.STOPPED && ids.includes(shellApp.get_id())) {
+                this._unwatchApp(app);
+                this._closeRetries.set(app, 0);
+                this._debounce(app, APP_CLOSE_DELAYS_MS[0], retry);
+            }
         }));
     }
 
@@ -405,7 +450,12 @@ export default class NullaExtension extends Extension {
         } else if (wanted && !active) {
             // Le impostazioni rapide si popolano in modo asincrono all'avvio.
             if (['icon-toggles', 'toggle-editor'].includes(key) && !this._quickSettingsReady()) {
-                this._debounce(`feature-${key}`, 200, () => this._syncFeature(key));
+                const waits = (this._featureWaits.get(key) ?? 0) + 1;
+                this._featureWaits.set(key, waits);
+                if (waits <= QS_MAX_WAITS)
+                    this._debounce(`feature-${key}`, QS_WAIT_MS, () => this._syncFeature(key));
+                else
+                    console.warn(`[Nulla] ${key}: impostazioni rapide non pronte, rinuncio`);
                 return;
             }
             const feature = this._featureFactories[key]();
@@ -428,7 +478,9 @@ export default class NullaExtension extends Extension {
     // ───────────── Slider nelle impostazioni rapide ─────────────
 
     _syncSlider() {
-        if (this._settings.get_boolean('show-slider'))
+        // Con lo schermo bloccato le impostazioni rapide restano raggiungibili:
+        // lì niente slider, che cambierebbe le impostazioni senza sbloccare.
+        if (this._settings.get_boolean('show-slider') && !Main.sessionMode.isLocked)
             this._addSlider();
         else
             this._removeSlider();
@@ -443,7 +495,9 @@ export default class NullaExtension extends Extension {
         // Il menu viene popolato in modo asincrono all'avvio della shell:
         // aspettiamo che gli indicatori di sistema siano al loro posto.
         if (quickSettings._backgroundApps === undefined) {
-            this._debounce('slider', 200, () => this._addSlider());
+            this._sliderWaits++;
+            if (this._sliderWaits <= QS_MAX_WAITS)
+                this._debounce('slider', QS_WAIT_MS, () => this._syncSlider());
             return;
         }
 

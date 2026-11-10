@@ -5,8 +5,8 @@
 #
 # Cosa modifica (con backup delle impostazioni originali al primo avvio):
 #   • estensione in ~/.local/share/gnome-shell/extensions/nulla@umas97
-#   • ~/.config/gtk-{3,4}.0/gtk.css  → aggiunge @import url("nulla.css");
-#   • schema scuro, pulsanti a destra (minimizza · massimizza · chiudi)
+#   • ~/.config/gtk-{3,4}.0/gtk.css  → aggiunge @import url("file://…/nulla.css");
+#   • pulsanti a destra (minimizza · massimizza · chiudi); chiaro/scuro non si tocca
 #   • Blur my Shell: sfocatura senza tinta propria (la tinta la mette Nulla)
 #   • Dash to Dock: trasparenza gestita dal tema
 #
@@ -19,7 +19,10 @@ source "$REPO/tools/common.sh"
 SRC="$REPO/extension/$UUID"
 DEST="$DATA_HOME/gnome-shell/extensions/$UUID"
 BACKUP="$DATA_HOME/nulla/backup-originale"
-IMPORT_LINE='@import url("nulla.css");'
+# Percorso assoluto: le app snap vedono gtk.css come collegamento nella propria
+# home, dove un percorso relativo non porterebbe a nulla.css.
+import_line() { printf '@import url("file://%s/%s/nulla.css");' "$CONFIG_HOME" "$1"; }
+OLD_IMPORT_LINE='@import url("nulla.css");'  # versioni precedenti
 
 for cmd in gsettings dconf glib-compile-schemas gjs python3; do
     command -v "$cmd" >/dev/null || { warn "Missing command: %s" "$cmd"; exit 1; }
@@ -42,32 +45,29 @@ gset() {
 
 # ───────────── 1. Backup delle impostazioni originali (solo la prima volta) ─────────────
 
+# Si prepara in una cartella temporanea e la si sposta solo a lavoro finito:
+# un backup interrotto a metà non viene scambiato per uno valido.
+# uninstall.sh lo usa tramite tools/restore-settings.py, che rimette solo le
+# chiavi cambiate da Nulla.
 if [[ ! -d "$BACKUP" ]]; then
     say "Backing up the original settings to %s" "$BACKUP"
-    mkdir -p "$BACKUP"
-    {
-        echo '#!/usr/bin/env bash'
-        echo '# Ripristina le impostazioni com'"'"'erano prima di Nulla (generato da install.sh).'
-        echo 'set -u'
-        for dir in /org/gnome/shell/extensions/blur-my-shell/ /org/gnome/shell/extensions/dash-to-dock/; do
-            name="$(basename "$dir").dconf"
-            dconf dump "$dir" > "$BACKUP/$name"
-            printf 'dconf reset -f %q\n' "$dir"
-            printf 'dconf load %q < "$(dirname "$0")/%s"\n' "$dir" "$name"
-        done
-        for key in /org/gnome/desktop/wm/preferences/button-layout /org/gnome/desktop/interface/color-scheme; do
-            value="$(dconf read "$key")"
-            if [[ -z "$value" ]]; then
-                printf 'dconf reset %q\n' "$key"
-            else
-                printf 'dconf write %q %q\n' "$key" "$value"
-            fi
-        done
-    } > "$BACKUP/restore.sh"
-    chmod +x "$BACKUP/restore.sh"
-    for v in gtk-4.0 gtk-3.0; do
-        [[ -f "$CONFIG_HOME/$v/gtk.css" ]] && cp "$CONFIG_HOME/$v/gtk.css" "$BACKUP/$v-gtk.css"
+    rm -rf "$BACKUP.tmp"
+    mkdir -p "$BACKUP.tmp"
+    for dir in /org/gnome/shell/extensions/blur-my-shell/ /org/gnome/shell/extensions/dash-to-dock/; do
+        dconf dump "$dir" > "$BACKUP.tmp/$(basename "$dir").dconf"
     done
+    key=/org/gnome/desktop/wm/preferences/button-layout
+    value="$(dconf read "$key")"
+    {
+        echo '# Valore originale dei pulsanti (letto da tools/restore-settings.py).'
+        if [[ -z "$value" ]]; then
+            printf 'dconf reset %q\n' "$key"
+        else
+            printf 'dconf write %q %q\n' "$key" "$value"
+        fi
+    } > "$BACKUP.tmp/restore.sh"
+    dconf read /org/gnome/shell/disable-user-extensions > "$BACKUP.tmp/disable-user-extensions"
+    mv "$BACKUP.tmp" "$BACKUP"
 else
     say "Original backup already present, keeping it (%s)" "$BACKUP"
 fi
@@ -88,9 +88,11 @@ for v in gtk-4.0 gtk-3.0; do
     css="$CONFIG_HOME/$v/gtk.css"
     mkdir -p "$(dirname "$css")"
     touch "$css"
-    if ! grep -qF "$IMPORT_LINE" "$css"; then
-        # @import deve stare in cima al file
-        { echo "$IMPORT_LINE"; cat "$css"; } > "$css.nulla-tmp" && mv "$css.nulla-tmp" "$css"
+    line="$(import_line "$v")"
+    if ! grep -qxF "$line" "$css"; then
+        # @import deve stare in cima al file; la vecchia riga relativa va via
+        { echo "$line"; grep -vxF -e "$OLD_IMPORT_LINE" "$css" || true; } > "$css.nulla-tmp" &&
+            mv "$css.nulla-tmp" "$css"
     fi
 done
 gjs -m "$REPO/tools/render-gtk.js" "$DEST"
@@ -123,9 +125,9 @@ gset "$DOCK_DIR" org.gnome.shell.extensions.dash-to-dock custom-background-color
 say "Enabling the extension and turning off the dock (apps move to the top bar)"
 gsettings set org.gnome.shell disable-user-extensions false
 mkdir -p "$DATA_HOME/nulla"
-python3 -I - "$UUID" "$DATA_HOME/nulla/riattiva-estensioni" <<'PY'
+python3 -I - "$UUID" "$DATA_HOME/nulla/riattiva-estensioni" "$DATA_HOME/nulla/disattivate-da-nulla" <<'PY'
 import ast, os, subprocess, sys
-uuid, record = sys.argv[1], sys.argv[2]
+uuid, record, added_record = sys.argv[1], sys.argv[2], sys.argv[3]
 DOCKS = ['dash-to-dock@micxgx.gmail.com', 'ubuntu-dock@ubuntu.com']
 def get(key):
     out = subprocess.run(['gsettings', 'get', 'org.gnome.shell', key],
@@ -139,16 +141,23 @@ if uuid not in enabled:
 if uuid in disabled:
     disabled.remove(uuid)
 # Dock: disattivata e annotata, così uninstall.sh la riattiva.
+# La Ubuntu Dock è attivata dalla modalità di sessione, non da enabled-extensions:
+# si annotano a parte le dock che Nulla aggiunge a disabled-extensions.
 removed = [d for d in DOCKS if d in enabled]
+added = [d for d in DOCKS if d not in disabled]
+if os.path.exists(record) and not os.path.exists(added_record):
+    # Installazione precedente: le dock le aveva aggiunte tutte, senza annotarle.
+    added = [d for d in DOCKS if d in disabled] + added
 enabled = [x for x in enabled if x not in DOCKS]
-for d in DOCKS:
-    if d not in disabled:
-        disabled.append(d)
+disabled += [d for d in added if d not in disabled]
 put('enabled-extensions', enabled)
 put('disabled-extensions', disabled)
-known = set(open(record).read().split()) if os.path.exists(record) else set()
-with open(record, 'w') as f:
-    f.write('\n'.join(sorted(known | set(removed))) + '\n')
+def remember(path, items):
+    known = set(open(path).read().split()) if os.path.exists(path) else set()
+    with open(path, 'w') as f:
+        f.write('\n'.join(sorted(known | set(items))) + '\n')
+remember(record, removed)
+remember(added_record, added)
 PY
 gnome-extensions disable dash-to-dock@micxgx.gmail.com 2>/dev/null || true
 # Su X11 o se la shell conosce già l'estensione, la attiva subito.

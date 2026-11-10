@@ -140,8 +140,10 @@ off puts back the settings that were there before.
 ```
 
 Removes the extension and the GTK files, puts back VS Code's and Chrome's previous
-settings, and restores the backup taken at install time (dock, Blur my Shell, button
-layout, color scheme). Log out and back in to finish.
+settings, and turns the dock back on. From the backup taken at install time it restores
+only the settings Nulla changed (Blur my Shell, dock, button layout), and only where they
+still hold Nulla's value: anything you changed afterwards is left alone. Log out and back
+in to finish.
 
 ## How it works
 
@@ -217,8 +219,10 @@ variant; the screenshots in this README are built with
   tint.
 - **Flatpak apps** don't read `~/.config/gtk-4.0` until you allow it:
   `flatpak override --user --filesystem=xdg-config/gtk-4.0:ro --filesystem=xdg-config/gtk-3.0:ro`
-- **Other Snap and Electron apps** draw their own windows and are not themed (VS Code
-  and Chrome are handled as described above).
+- **Snap apps** built with GTK 4 get the theme; GTK 3 snaps get it without the symbols
+  inside the window buttons (snap confinement only lets them read CSS files). Snap apps
+  that draw their own windows (Flutter, Electron) are not themed; VS Code and Chrome are
+  handled as described above.
 - **Apps in the bar**: dragging a running app that isn't a favorite adds it to the
   favorites (as in the dock); remove it with right click → *Unpin*.
 - **Desktop clock**: its color adapts to the wallpaper, not to windows, and it shows

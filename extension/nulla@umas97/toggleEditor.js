@@ -45,6 +45,9 @@ export class ToggleEditor {
         this._applyOrder();
 
         this._grid.connectObject('child-added', () => this._queueScan(), this);
+        // Schermo bloccato: niente matita, l'ordine dei toggle non si cambia senza sbloccare.
+        Main.sessionMode.connectObject('updated', () => this._syncLocked(), this);
+        this._syncLocked();
         this._menu.connectObject('open-state-changed', (_m, open) => {
             if (!open && this._editing)
                 this._setEditing(false);
@@ -65,6 +68,7 @@ export class ToggleEditor {
 
         this._grid.disconnectObject(this);
         this._menu.disconnectObject(this);
+        Main.sessionMode.disconnectObject(this);
         this._settings.disconnectObject(this);
 
         // Ripristino: tutto visibile come vuole il sistema, ordine originale.
@@ -123,7 +127,10 @@ export class ToggleEditor {
             this._items.set(child, {id, sysVisible: child.visible});
             child.connectObject(
                 'notify::visible', () => this._onSystemVisibility(child),
-                'destroy', () => this._items.delete(child),
+                'destroy', () => {
+                    this._items.delete(child);
+                    this._originalOrder = this._originalOrder.filter(item => item !== child);
+                },
                 this);
             added = true;
         }
@@ -251,6 +258,13 @@ export class ToggleEditor {
     }
 
     // ───────────── modalità modifica ─────────────
+
+    _syncLocked() {
+        const locked = Main.sessionMode.isLocked;
+        if (locked && this._editing)
+            this._setEditing(false);
+        this._editRow.visible = !locked;
+    }
 
     _setEditing(editing) {
         if (this._editing === editing)

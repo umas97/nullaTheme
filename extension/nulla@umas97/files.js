@@ -31,9 +31,48 @@ export function ensureDir(dir) {
     }
 }
 
+/** Simboli dei pulsanti come data: URI, incorporati nel CSS. */
+function inlineAssets(themeDir) {
+    const map = new Map();
+    for (const name of GTK_ASSETS) {
+        const [, bytes] = themeDir.get_child('assets').get_child(name).load_contents(null);
+        map.set(`nulla-assets/${name}`, `data:image/svg+xml;base64,${GLib.base64_encode(bytes)}`);
+    }
+    return css => css.replace(/url\("(nulla-assets\/[^"]+)"\)/g,
+        (match, path) => (map.has(path) ? `url("${map.get(path)}")` : match));
+}
+
+/** GTK3 non disegna i data: URI: per lui i simboli restano file accanto a nulla.css. */
+function copyAssets(themeDir, dir) {
+    const assets = dir.get_child('nulla-assets');
+    ensureDir(assets);
+    for (const name of GTK_ASSETS) {
+        themeDir.get_child('assets').get_child(name).copy(assets.get_child(name),
+            Gio.FileCopyFlags.OVERWRITE, null, null);
+    }
+}
+
+/** GTK4 li ha incorporati: toglie la cartella delle versioni precedenti. */
+function removeAssets(dir) {
+    const assets = dir.get_child('nulla-assets');
+    for (const name of GTK_ASSETS) {
+        try {
+            assets.get_child(name).delete(null);
+        } catch {}
+    }
+    try {
+        assets.delete(null);
+    } catch {}
+}
+
 /**
- * Scrive ~/.config/gtk-{3,4}.0/nulla.css e i simboli dei pulsanti.
- * gtk.css li importa (riga aggiunta da install.sh).
+ * Scrive ~/.config/gtk-{3,4}.0/nulla.css, importato da gtk.css (riga aggiunta
+ * da install.sh, con percorso assoluto).
+ *
+ * Le app snap vedono gtk.css tramite un collegamento nella propria home e
+ * AppArmor lascia leggere loro solo i *.css di ~/.config/gtk-*: per GTK4 i
+ * simboli dei pulsanti sono quindi incorporati nel CSS. GTK3 non disegna i
+ * data: URI e usa ancora i file SVG (nelle snap GTK3 manca solo il simbolo).
  *
  * GTK4 riceve entrambe le varianti (la scura dentro @media prefers-color-scheme,
  * così le app seguono il sistema da sole); GTK3 non ha le media query e riceve
@@ -46,27 +85,27 @@ export function ensureDir(dir) {
  */
 export function writeGtkFiles(extDir, tokensFor, dark, apply) {
     const themeDir = extDir.get_child('theme');
+    const inline = inlineAssets(themeDir);
 
     for (const [version, template] of GTK_TARGETS) {
         const dir = Gio.File.new_for_path(
             GLib.build_filenamev([GLib.get_user_config_dir(), version]));
-        const assets = dir.get_child('nulla-assets');
-        ensureDir(assets);
-
-        for (const name of GTK_ASSETS) {
-            themeDir.get_child('assets').get_child(name).copy(assets.get_child(name),
-                Gio.FileCopyFlags.OVERWRITE, null, null);
-        }
+        ensureDir(dir);
+        const gtk4 = version === 'gtk-4.0';
+        if (gtk4)
+            removeAssets(dir);
+        else
+            copyAssets(themeDir, dir);
 
         const source = readText(themeDir.get_child(template));
         let css = '/* Nulla: tema disattivato per le app (impostazione apply-gtk) */\n';
-        if (apply && version === 'gtk-4.0') {
+        if (apply && gtk4) {
             css = `${render(source, tokensFor(false))}\n` +
                 `@media (prefers-color-scheme: dark) {\n${render(source, tokensFor(true))}\n}\n`;
         } else if (apply) {
             css = render(source, tokensFor(dark));
         }
-        writeText(dir.get_child('nulla.css'), css);
+        writeText(dir.get_child('nulla.css'), gtk4 ? inline(css) : css);
     }
 }
 

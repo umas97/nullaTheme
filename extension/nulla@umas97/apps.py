@@ -16,6 +16,7 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 
 HOME = os.path.expanduser('~')
 CONFIG = os.environ.get('XDG_CONFIG_HOME') or os.path.join(HOME, '.config')
@@ -33,10 +34,21 @@ def load(path):
 
 
 def save(path, data, **dump_args):
-    tmp = path + '.nulla-tmp'
-    with open(tmp, 'w') as f:
-        json.dump(data, f, **dump_args)
-    os.replace(tmp, path)
+    # Si scrive sul file vero (un symlink di dotfiles resta un symlink), con un
+    # temporaneo unico nella stessa cartella e gli stessi permessi (Preferences
+    # di Chrome è 0600).
+    path = os.path.realpath(path)
+    fd, tmp = tempfile.mkstemp(prefix='.nulla-', dir=os.path.dirname(path))
+    try:
+        with os.fdopen(fd, 'w') as f:
+            json.dump(data, f, **dump_args)
+        if os.path.exists(path):
+            shutil.copymode(path, tmp)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        raise
 
 
 def record_path(app):
@@ -76,16 +88,22 @@ VSCODE_VALUES = {
 def vscode(action):
     if not os.path.isdir(os.path.dirname(VSCODE_THEME_DIR)):
         return 0  # VS Code non installato
+    if action == 'restore' and os.path.isdir(VSCODE_THEME_DIR):
+        # I file del tema li scrive l'estensione: si tolgono anche se
+        # settings.json non si legge (es. commenti JSONC).
+        shutil.rmtree(VSCODE_THEME_DIR)
+    exists = os.path.exists(VSCODE_SETTINGS)
+    record = record_path('vscode')
     try:
-        data = load(VSCODE_SETTINGS) if os.path.exists(VSCODE_SETTINGS) else {}
+        data = load(VSCODE_SETTINGS) if exists else {}
+        old_record = load(record) if os.path.exists(record) else None
     except ValueError:
         return UNREADABLE
-    record = record_path('vscode')
 
     if action == 'apply':
         # Si annota il valore di ogni chiave prima che Nulla la tocchi la prima
         # volta (anche le chiavi aggiunte in versioni successive).
-        old = load(record) if os.path.exists(record) else {}
+        old = old_record or {}
         new = {k: data.get(k, MISSING) for k in VSCODE_VALUES if k not in old}
         if new:
             os.makedirs(RECORDS, exist_ok=True)
@@ -96,20 +114,17 @@ def vscode(action):
             save(VSCODE_SETTINGS, data, indent=4, ensure_ascii=False)
         return 0
 
-    if os.path.exists(record):
-        old = load(record)
-        for key, value in VSCODE_VALUES.items():
-            if data.get(key) != value:
-                continue  # cambiato dall'utente: resta così
-            if old.get(key) is MISSING:
-                data.pop(key, None)
-            else:
-                data[key] = old[key]
-        save(VSCODE_SETTINGS, data, indent=4, ensure_ascii=False)
+    if old_record is not None:
+        if exists:  # settings.json cancellato nel frattempo: non lo si ricrea
+            for key, value in VSCODE_VALUES.items():
+                if data.get(key) != value:
+                    continue  # cambiato dall'utente: resta così
+                if old_record.get(key) is MISSING:
+                    data.pop(key, None)
+                else:
+                    data[key] = old_record[key]
+            save(VSCODE_SETTINGS, data, indent=4, ensure_ascii=False)
         os.remove(record)
-    # I file del tema li scrive l'estensione: qui basta toglierli.
-    if os.path.isdir(VSCODE_THEME_DIR):
-        shutil.rmtree(VSCODE_THEME_DIR)
     return 0
 
 
@@ -150,7 +165,10 @@ def chrome(action):
         if gtk:  # altrimenti l'utente ha già scelto un altro tema: resta quello
             if running('chrome'):
                 return BUSY
-            old = load(record)
+            try:
+                old = load(record)
+            except ValueError:
+                return UNREADABLE
             prefs['extensions']['theme'] = old['extensions.theme']
             prefs['browser']['theme'] = old['browser.theme']
             save(CHROME_PREFS, prefs, separators=(',', ':'))

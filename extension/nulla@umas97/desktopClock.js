@@ -35,7 +35,8 @@ export class DesktopClock {
         this._background = new Gio.Settings({schema_id: 'org.gnome.desktop.background'});
         this._wallpaper = null;  // {uri, pixels, stride, channels, iw, ih, width, height}
         this._recolorId = 0;
-        this._recolorRect = null; // ultimo rettangolo campionato (si salta se uguale)
+        this._recolorRect = null;
+        this._loading = null;     // {uri, cancellable} della lettura in corso // ultimo rettangolo campionato (si salta se uguale)
 
         this._face = new ClockFace(this._settings, {onRestyle: () => this._place()});
         this._actor = this._face.actor;
@@ -43,7 +44,8 @@ export class DesktopClock {
         Main.layoutManager._backgroundGroup.add_child(this._actor);
 
         this._settings.connectObject('changed::clock-position', () => this._place(), this);
-        this._interface.connectObject('changed::color-scheme', () => this._queueRecolor(true), this);
+        // Chiaro/scuro: l'immagine si ricarica solo se cambia davvero (vedi _loadWallpaper).
+        this._interface.connectObject('changed::color-scheme', () => this._queueRecolor(false, true), this);
         this._background.connectObject('changed', () => this._queueRecolor(true), this);
         Main.layoutManager.connectObject(
             'monitors-changed', () => this._place(),
@@ -59,6 +61,8 @@ export class DesktopClock {
     }
 
     disable() {
+        this._loading?.cancellable.cancel();
+        this._loading = null;
         if (this._recolorId)
             GLib.source_remove(this._recolorId);
         this._recolorId = 0;
@@ -107,9 +111,11 @@ export class DesktopClock {
 
     // ───────────── colore adattivo ─────────────
 
-    _queueRecolor(reload) {
+    _queueRecolor(reload, resample = reload) {
         if (reload)
-            this._wallpaper = this._recolorRect = null;
+            this._wallpaper = null;
+        if (resample)
+            this._recolorRect = null;
         if (this._recolorId)
             return;
         this._recolorId = GLib.idle_add(GLib.PRIORITY_LOW, () => {
@@ -152,27 +158,66 @@ export class DesktopClock {
             return null;
 
         // Lo sfondo cambia solo con le impostazioni (che svuotano la cache):
-        // niente I/O sul thread della shell a ogni ridisposizione.
+        // niente I/O a ogni ridisposizione.
         if (this._wallpaper?.uri === uri)
             return this._wallpaper;
 
         const file = Gio.File.new_for_uri(uri);
         const path = file.get_path();
-        if (!path || path.endsWith('.xml') || !file.query_exists(null))
+        if (!path || path.endsWith('.xml') || this._loading?.uri === uri)
             return null;
 
-        const [, width, height] = GdkPixbuf.Pixbuf.get_file_info(path);
-        const pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, SAMPLE_SIZE, SAMPLE_SIZE, true);
-        // get_pixels() copia l'intero buffer: lo si fa una volta sola.
-        this._wallpaper = {
-            uri, width, height,
-            pixels: pixbuf.get_pixels(),
-            stride: pixbuf.get_rowstride(),
-            channels: pixbuf.get_n_channels(),
-            iw: pixbuf.get_width(),
-            ih: pixbuf.get_height(),
+        // Decodifica in background: un'immagine 4K bloccherebbe la shell per
+        // decine di millisecondi. A lettura finita si ricampiona.
+        this._loading?.cancellable.cancel();
+        const cancellable = new Gio.Cancellable();
+        const loading = this._loading = {uri, cancellable};
+        const done = (wallpaper, error) => {
+            if (this._loading !== loading)
+                return;
+            this._loading = null;
+            if (error) {
+                if (!error.matches?.(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                    console.warn(`[Nulla] orologio: ${error.message}`);
+                return;
+            }
+            this._wallpaper = wallpaper;
+            this._queueRecolor(false, true);
         };
-        return this._wallpaper;
+
+        GdkPixbuf.Pixbuf.get_file_info_async(path, cancellable, (_o, infoRes) => {
+            try {
+                const [, width, height] = GdkPixbuf.Pixbuf.get_file_info_finish(infoRes);
+                file.read_async(GLib.PRIORITY_LOW, cancellable, (_f, readRes) => {
+                    try {
+                        const stream = file.read_finish(readRes);
+                        GdkPixbuf.Pixbuf.new_from_stream_at_scale_async(stream, SAMPLE_SIZE, SAMPLE_SIZE,
+                            true, cancellable, (_s, pixRes) => {
+                                try {
+                                    const pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(pixRes);
+                                    stream.close(null);
+                                    // get_pixels() copia l'intero buffer: lo si fa una volta sola.
+                                    done({
+                                        uri, width, height,
+                                        pixels: pixbuf.get_pixels(),
+                                        stride: pixbuf.get_rowstride(),
+                                        channels: pixbuf.get_n_channels(),
+                                        iw: pixbuf.get_width(),
+                                        ih: pixbuf.get_height(),
+                                    });
+                                } catch (e) {
+                                    done(null, e);
+                                }
+                            });
+                    } catch (e) {
+                        done(null, e);
+                    }
+                });
+            } catch (e) {
+                done(null, e);
+            }
+        });
+        return null;
     }
 
     /** Luminosità media 0..1 dello sfondo nel rettangolo (coordinate dello schermo). */
