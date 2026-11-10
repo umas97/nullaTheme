@@ -13,6 +13,7 @@
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
+import Shell from 'gi://Shell';
 import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
@@ -35,7 +36,8 @@ const QS_COLUMNS = 2;
 const SHELL_DEBOUNCE_MS = 60;    // ridisegno della shell mentre si trascina lo slider
 const SAVE_DEBOUNCE_MS = 200;    // scrittura del valore in gsettings
 const FILES_DEBOUNCE_MS = 500;   // file GTK e Blur my Shell (non servono in tempo reale)
-const APP_RETRY_MS = 60000;      // Chrome aperto: si riprova finché non viene chiuso
+const APP_RETRY_MS = 30 * 60000; // Chrome aperto: si riprova quando si chiude (o, al più, ogni 30 min)
+const APP_CLOSE_DELAY_MS = 2000; // margine perché i processi dell'app finiscano di uscire
 const APPS_BUSY = 3;             // codice di uscita di apps.py: app aperta
 
 const TransparencySlider = GObject.registerClass(
@@ -137,6 +139,7 @@ export default class NullaExtension extends Extension {
         St.Settings.get().connectObject('notify::accent-color',
             () => this._debounce('vscode', FILES_DEBOUNCE_MS, () => this._writeVscodeTheme()), this);
         this._appsCancellable = new Gio.Cancellable();
+        this._appWatches = new Map();
         this._syncVscode();
         // A ogni accesso, perché Chrome Sync può rimettere il tema dell'account.
         this._runApps('chrome');
@@ -159,6 +162,8 @@ export default class NullaExtension extends Extension {
     disable() {
         this._appsCancellable.cancel();
         this._appsCancellable = null;
+        for (const app of [...this._appWatches.keys()])
+            this._unwatchApp(app);
         for (const id of this._timeouts.values())
             GLib.source_remove(id);
         this._timeouts.clear();
@@ -312,7 +317,7 @@ export default class NullaExtension extends Extension {
                 const [, , stderr] = proc.communicate_utf8_finish(res);
                 const status = proc.get_exit_status();
                 if (status === APPS_BUSY)
-                    this._debounce(app, APP_RETRY_MS, () => this._runApps(app));
+                    this._retryWhenClosed(app);
                 else if (status !== 0)
                     console.warn(`[Nulla] ${app} ${action}: uscita ${status} ${stderr}`);
             } catch (e) {
@@ -320,6 +325,32 @@ export default class NullaExtension extends Extension {
                     console.warn(`[Nulla] ${app} ${action}: ${e.message}`);
             }
         });
+    }
+
+    /**
+     * App aperta: invece di rilanciare apps.py a intervalli fissi si aspetta
+     * che GNOME la segnali chiusa. Il timer lungo copre Chrome rimasto in
+     * background senza finestre (per GNOME è già "chiuso").
+     */
+    _retryWhenClosed(app) {
+        const appSystem = Shell.AppSystem.get_default();
+        const retry = () => {
+            this._unwatchApp(app);
+            this._runApps(app);
+        };
+        this._unwatchApp(app);
+        this._debounce(app, APP_RETRY_MS, retry);
+        this._appWatches.set(app, appSystem.connect('app-state-changed', (_s, shellApp) => {
+            if (shellApp.state === Shell.AppState.STOPPED && shellApp.get_id().includes(app))
+                this._debounce(app, APP_CLOSE_DELAY_MS, retry);
+        }));
+    }
+
+    _unwatchApp(app) {
+        const id = this._appWatches.get(app);
+        if (id)
+            Shell.AppSystem.get_default().disconnect(id);
+        this._appWatches.delete(app);
     }
 
     // ───────────── Blur my Shell ─────────────

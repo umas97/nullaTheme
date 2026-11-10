@@ -58,7 +58,11 @@ export class BarClock {
         this.actor.connect('destroy', () => this._onDestroy());
 
         this._interface.connectObject('changed::clock-format', () => this._tick(), this);
-        this._settings.connectObject('changed::bar-clock', () => this._queueUpdate(), this);
+        this._settings.connectObject('changed::bar-clock', () => {
+            this._mode = this._settings.get_string('bar-clock');
+            this._update();
+        }, this);
+        this._mode = this._settings.get_string('bar-clock');
 
         // Tutto ciò che può scoprire o coprire l'orologio sul desktop.
         Main.overview.connectObject(
@@ -67,7 +71,19 @@ export class BarClock {
             this);
         global.workspace_manager.connectObject(
             'active-workspace-changed', () => this._queueUpdate(), this);
-        global.display.connectObject('restacked', () => this._queueUpdate(), this);
+        // Durante uno spostamento/ridimensionamento le finestre cambiano
+        // allocazione a ogni frame: si ricalcola una volta sola alla fine.
+        this._grabbing = false;
+        global.display.connectObject(
+            'restacked', () => this._queueUpdate(),
+            'grab-op-begin', () => {
+                this._grabbing = true;
+            },
+            'grab-op-end', () => {
+                this._grabbing = false;
+                this._queueUpdate();
+            },
+            this);
         global.window_manager.connectObject(
             'minimize', () => this._queueUpdate(),
             'unminimize', () => this._queueUpdate(),
@@ -124,13 +140,14 @@ export class BarClock {
         const twelve = this._interface.get_string('clock-format') === '12h';
         this._time.text = now.format(twelve ? '%l:%M' : '%H:%M').trim();
 
-        // Prossimo aggiornamento allo scoccare del minuto.
-        const ms = (60 - now.get_seconds()) * 1000 + 50;
-        this._tickId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, ms, () => {
-            this._tickId = 0;
-            this._tick();
-            return GLib.SOURCE_REMOVE;
-        });
+        // Prossimo aggiornamento allo scoccare del minuto. Timer in secondi:
+        // GLib lo accorpa agli altri risvegli (come l'orologio sul desktop).
+        this._tickId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT,
+            Math.max(1, 60 - now.get_second()), () => {
+                this._tickId = 0;
+                this._tick();
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     // ───────────── visibilità dell'orologio sul desktop ─────────────
@@ -147,6 +164,9 @@ export class BarClock {
 
     _queueUpdate() {
         if (this._laterId)
+            return;
+        // Fuori dalla modalità "intelligente" la copertura non conta.
+        if (this._grabbing || (this._mode !== 'smart' && this._showTime !== null))
             return;
         this._laterId = global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
             this._laterId = 0;
@@ -199,7 +219,7 @@ export class BarClock {
     _update() {
         if (!this.actor)
             return;
-        const mode = this._settings.get_string('bar-clock');
+        const mode = this._mode;
         const showTime = mode === 'always' || (mode === 'smart' && this._desktopClockHidden());
         if (showTime === this._showTime)
             return;

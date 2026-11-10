@@ -33,8 +33,9 @@ export class DesktopClock {
     enable() {
         this._interface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
         this._background = new Gio.Settings({schema_id: 'org.gnome.desktop.background'});
-        this._wallpaper = null;  // {key, pixbuf, width, height}
+        this._wallpaper = null;  // {uri, pixels, stride, channels, iw, ih, width, height}
         this._recolorId = 0;
+        this._recolorRect = null; // ultimo rettangolo campionato (si salta se uguale)
 
         this._face = new ClockFace(this._settings, {onRestyle: () => this._place()});
         this._actor = this._face.actor;
@@ -108,7 +109,7 @@ export class DesktopClock {
 
     _queueRecolor(reload) {
         if (reload)
-            this._wallpaper = null;
+            this._wallpaper = this._recolorRect = null;
         if (this._recolorId)
             return;
         this._recolorId = GLib.idle_add(GLib.PRIORITY_LOW, () => {
@@ -126,6 +127,15 @@ export class DesktopClock {
         const [x, y] = this._actor.get_position();
         const [, width] = this._actor.get_preferred_width(-1);
         const [, height] = this._actor.get_preferred_height(width);
+
+        // Il testo cambia larghezza a ogni minuto: si ricampiona solo se la
+        // zona coperta cambia in modo apprezzabile o se è cambiato lo sfondo.
+        const {width: mw, height: mh} = Main.layoutManager.primaryMonitor;
+        const rect = [x, y, width, height].map(v => Math.round(v / 16)).concat(mw, mh);
+        if (this._recolorRect?.every((v, i) => v === rect[i]))
+            return;
+        this._recolorRect = rect;
+
         const luminance = this._sampleLuminance(x, y, width, height);
 
         if (luminance !== null && luminance > DARK_TEXT_THRESHOLD)
@@ -141,21 +151,27 @@ export class DesktopClock {
         if (!uri || options === 'none')
             return null;
 
+        // Lo sfondo cambia solo con le impostazioni (che svuotano la cache):
+        // niente I/O sul thread della shell a ogni ridisposizione.
+        if (this._wallpaper?.uri === uri)
+            return this._wallpaper;
+
         const file = Gio.File.new_for_uri(uri);
         const path = file.get_path();
         if (!path || path.endsWith('.xml') || !file.query_exists(null))
             return null;
 
-        // Stesso percorso ma contenuto nuovo (es. ~/.config/background): conta la data.
-        const mtime = file.query_info('time::modified', Gio.FileQueryInfoFlags.NONE, null)
-            .get_attribute_uint64('time::modified');
-        const key = `${uri}|${mtime}`;
-        if (this._wallpaper?.key === key)
-            return this._wallpaper;
-
         const [, width, height] = GdkPixbuf.Pixbuf.get_file_info(path);
         const pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, SAMPLE_SIZE, SAMPLE_SIZE, true);
-        this._wallpaper = {key, pixbuf, width, height};
+        // get_pixels() copia l'intero buffer: lo si fa una volta sola.
+        this._wallpaper = {
+            uri, width, height,
+            pixels: pixbuf.get_pixels(),
+            stride: pixbuf.get_rowstride(),
+            channels: pixbuf.get_n_channels(),
+            iw: pixbuf.get_width(),
+            ih: pixbuf.get_height(),
+        };
         return this._wallpaper;
     }
 
@@ -177,9 +193,7 @@ export class DesktopClock {
         if (!wallpaper)
             return null;
 
-        const {pixbuf} = wallpaper;
-        const iw = pixbuf.get_width();
-        const ih = pixbuf.get_height();
+        const {pixels, stride, channels, iw, ih} = wallpaper;
         const mw = monitor.width;
         const mh = monitor.height;
 
@@ -215,9 +229,6 @@ export class DesktopClock {
         const y0 = clampY((y - monitor.y - oy) / sy);
         const y1 = clampY((y + h - monitor.y - oy) / sy);
 
-        const pixels = pixbuf.get_pixels();
-        const stride = pixbuf.get_rowstride();
-        const channels = pixbuf.get_n_channels();
         const step = Math.max(1, Math.floor(Math.sqrt(((x1 - x0 + 1) * (y1 - y0 + 1)) / 4000)));
 
         let sum = 0;
