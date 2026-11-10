@@ -85,7 +85,11 @@ VSCODE_VALUES = {
 }
 
 
-def vscode(action):
+def mtime(path):
+    return os.stat(path).st_mtime_ns if os.path.exists(path) else None
+
+
+def vscode(action, attempts=3):
     if not os.path.isdir(os.path.dirname(VSCODE_THEME_DIR)):
         return 0  # VS Code non installato
     if action == 'restore' and os.path.isdir(VSCODE_THEME_DIR):
@@ -93,6 +97,7 @@ def vscode(action):
         # settings.json non si legge (es. commenti JSONC).
         shutil.rmtree(VSCODE_THEME_DIR)
     exists = os.path.exists(VSCODE_SETTINGS)
+    before = mtime(VSCODE_SETTINGS)
     record = record_path('vscode')
     try:
         data = load(VSCODE_SETTINGS) if exists else {}
@@ -109,8 +114,16 @@ def vscode(action):
             os.makedirs(RECORDS, exist_ok=True)
             save(record, {**old, **new})
         if any(data.get(k) != v for k, v in VSCODE_VALUES.items()):
+            # Copia intera del file prima della prima modifica di Nulla.
+            backup = os.path.join(RECORDS, 'vscode-settings.json')
+            if exists and not os.path.exists(backup):
+                os.makedirs(RECORDS, exist_ok=True)
+                shutil.copy2(VSCODE_SETTINGS, backup)
             data.update(VSCODE_VALUES)
             os.makedirs(os.path.dirname(VSCODE_SETTINGS), exist_ok=True)
+            # VS Code ha salvato nel frattempo: si rilegge, per non perdere la sua modifica.
+            if mtime(VSCODE_SETTINGS) != before:
+                return vscode(action, attempts - 1) if attempts > 1 else BUSY
             save(VSCODE_SETTINGS, data, indent=4, ensure_ascii=False)
         return 0
 
@@ -123,8 +136,13 @@ def vscode(action):
                     data.pop(key, None)
                 else:
                     data[key] = old_record[key]
+            if mtime(VSCODE_SETTINGS) != before:
+                return vscode(action, attempts - 1) if attempts > 1 else BUSY
             save(VSCODE_SETTINGS, data, indent=4, ensure_ascii=False)
         os.remove(record)
+        backup = os.path.join(RECORDS, 'vscode-settings.json')
+        if os.path.exists(backup):
+            os.remove(backup)  # ripristino riuscito: la copia di sicurezza non serve più
     return 0
 
 

@@ -9,22 +9,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Translators: short date under the clock, strftime format (e.g. "Fri, Nov 6")
-#: extension/nulla@umas97/clockFace.js:41
+#: extension/nulla@umas97/clockFace.js:42
 msgid "%a, %b %e"
 msgstr ""
 
 #. Translators: day and month without weekday, strftime format (e.g. "November 6")
-#: extension/nulla@umas97/clockFace.js:44
+#: extension/nulla@umas97/clockFace.js:45
 msgid "%B %e"
 msgstr ""
 
 #. Translators: long date under the clock, strftime format (e.g. "Friday, November 6")
-#: extension/nulla@umas97/clockFace.js:47
+#: extension/nulla@umas97/clockFace.js:48
 msgid "%A, %B %e"
 msgstr ""
 
-#: extension/nulla@umas97/extension.js:44 extension/nulla@umas97/extension.js:50
+#: extension/nulla@umas97/extension.js:54 extension/nulla@umas97/extension.js:60
 msgid "Transparency"
+msgstr ""
+
+#: extension/nulla@umas97/gdmCheck.js:57
+msgid "Login screen theme out of date"
+msgstr ""
+
+#: extension/nulla@umas97/gdmCheck.js:59
+msgid "Ubuntu updated GNOME Shell or its theme. To keep the login screen working, run tools/gdm/install-gdm.sh again from the Nulla folder (or tools/gdm/uninstall-gdm.sh to go back to Ubuntu's)."
 msgstr ""
 
 #: extension/nulla@umas97/prefs.js:9
@@ -335,88 +343,88 @@ msgstr ""
 msgid "Use the same corner radii for the blur"
 msgstr ""
 
-#: extension/nulla@umas97/toggleEditor.js:232
+#: extension/nulla@umas97/toggleEditor.js:239
 msgid "Tap to hide · drag to reorder"
 msgstr ""
 
-#: extension/nulla@umas97/toggleEditor.js:242 extension/nulla@umas97/toggleEditor.js:262
+#: extension/nulla@umas97/toggleEditor.js:249 extension/nulla@umas97/toggleEditor.js:276
 msgid "Edit toggles"
 msgstr ""
 
-#: extension/nulla@umas97/toggleEditor.js:262
+#: extension/nulla@umas97/toggleEditor.js:276
 msgid "Done"
 msgstr ""
 
-#: extension/nulla@umas97/toggleEditor.js:268
+#: extension/nulla@umas97/toggleEditor.js:282
 msgid "Hidden · tap to add"
 msgstr ""
 
-#: install.sh:25 tools/gdm/build-gdm-theme.sh:19
+#: install.sh:28 tools/gdm/build-gdm-theme.sh:19
 #, c-format
 msgid "Missing command: %s"
 msgstr ""
 
-#: install.sh:40
+#: install.sh:43
 #, c-format
 msgid "Skipped: %s (schema or key missing)"
 msgstr ""
 
-#: install.sh:46
+#: install.sh:53
 #, c-format
 msgid "Backing up the original settings to %s"
 msgstr ""
 
-#: install.sh:72
+#: install.sh:64
 #, c-format
 msgid "Original backup already present, keeping it (%s)"
 msgstr ""
 
-#: install.sh:77
+#: install.sh:69
 #, c-format
 msgid "Copying the extension to %s"
 msgstr ""
 
-#: install.sh:86
+#: install.sh:78
 msgid "Linking the theme to GTK 3 and GTK 4 apps"
 msgstr ""
 
-#: install.sh:101
+#: install.sh:95
 msgid "Setting macOS-style window buttons on the right (− + ×)"
 msgstr ""
 
-#: install.sh:106
+#: install.sh:100
 msgid "Blur my Shell: blur on, tint handled by Nulla"
 msgstr ""
 
-#: install.sh:112
+#: install.sh:106
 msgid "Blur my Shell not found: no blur (the theme works anyway)"
 msgstr ""
 
-#: install.sh:116
+#: install.sh:110
 msgid "Dock: transparency handled by the theme"
 msgstr ""
 
-#: install.sh:123
+#: install.sh:117
 msgid "Enabling the extension and turning off the dock (apps move to the top bar)"
 msgstr ""
 
-#: install.sh:158
+#: install.sh:159
 msgid "Done."
 msgstr ""
 
-#: install.sh:159
+#: install.sh:160
 msgid "• Log out and back in to activate the shell theme and the slider."
 msgstr ""
 
-#: install.sh:160
+#: install.sh:161
 msgid "• GTK apps that are already open must be reopened."
 msgstr ""
 
-#: install.sh:161
+#: install.sh:162
 msgid "• Accent and light/dark: Settings → Appearance.  Transparency: Quick Settings (top right)."
 msgstr ""
 
-#: install.sh:162
+#: install.sh:163
 msgid "• Uninstall: ./uninstall.sh"
 msgstr ""
 
@@ -466,32 +474,32 @@ msgstr ""
 msgid "Resource missing from the compiled theme: %s"
 msgstr ""
 
-#: tools/gdm/build-gdm-theme.sh:101
+#: tools/gdm/build-gdm-theme.sh:108
 #, c-format
 msgid "Ready: %s"
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:22
+#: tools/gdm/install-gdm.sh:23
 msgid "Run it as your normal user (without sudo): it needs to read your wallpaper and accent."
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:28
+#: tools/gdm/install-gdm.sh:29
 msgid "Installing the theme (needs the administrator password)"
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:34
+#: tools/gdm/install-gdm.sh:36
 msgid "Done. The new login screen appears at the next logout or reboot."
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:35
+#: tools/gdm/install-gdm.sh:37
 msgid "• To go back to Ubuntu's: tools/gdm/uninstall-gdm.sh"
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:36
+#: tools/gdm/install-gdm.sh:38
 msgid "• If something goes wrong and you can't log in: Ctrl+Alt+F3,"
 msgstr ""
 
-#: tools/gdm/install-gdm.sh:37
+#: tools/gdm/install-gdm.sh:39
 #, c-format
 msgid "  log in from the console and run: sudo update-alternatives --auto %s"
 msgstr ""
@@ -500,35 +508,39 @@ msgstr ""
 msgid "Done: Ubuntu's login screen is back (visible at the next logout)."
 msgstr ""
 
-#: uninstall.sh:12
+#: uninstall.sh:15
 msgid "Disabling the extension and turning the dock back on"
 msgstr ""
 
-#: uninstall.sh:32
+#: uninstall.sh:43
 msgid "Removing files"
 msgstr ""
 
-#: uninstall.sh:46
+#: uninstall.sh:57
 msgid "VS Code and Chrome: restoring the previous settings"
 msgstr ""
 
-#: uninstall.sh:52
+#: uninstall.sh:64
 msgid "Chrome is open: close it and run ./uninstall.sh again to restore its previous theme"
 msgstr ""
 
-#: uninstall.sh:53
+#: uninstall.sh:66
+msgid "VS Code was saving its settings: run ./uninstall.sh again"
+msgstr ""
+
+#: uninstall.sh:68
 #, c-format
 msgid "%s: settings left unchanged (unreadable file), fix them by hand"
 msgstr ""
 
-#: uninstall.sh:58
-msgid "Restoring the original settings (dock, Blur my Shell, buttons, color scheme)"
+#: uninstall.sh:73
+msgid "Restoring the settings Nulla changed (dock, Blur my Shell, buttons)"
 msgstr ""
 
-#: uninstall.sh:63
+#: uninstall.sh:78
 msgid "No backup found: dock and Blur my Shell settings left as they are"
 msgstr ""
 
-#: uninstall.sh:66
+#: uninstall.sh:81
 msgid "Done. Log out and back in to fully return to the previous theme."
 msgstr ""

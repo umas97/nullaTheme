@@ -60,12 +60,16 @@ for app in vscode chrome; do
     python3 -I "$REPO/extension/$UUID/apps.py" "$app" restore || status=$?
     case $status in
         0) ;;
-        3) warn "Chrome is open: close it and run ./uninstall.sh again to restore its previous theme" ;;
+        3) if [[ $app == chrome ]]; then
+               warn "Chrome is open: close it and run ./uninstall.sh again to restore its previous theme"
+           else
+               warn "VS Code was saving its settings: run ./uninstall.sh again"
+           fi ;;
         *) warn "%s: settings left unchanged (unreadable file), fix them by hand" "$app" ;;
     esac
 done
 
-if [[ -f "$BACKUP/restore.sh" ]]; then
+if [[ -f "$BACKUP/button-layout" || -f "$BACKUP/restore.sh" ]]; then
     say "Restoring the settings Nulla changed (dock, Blur my Shell, buttons)"
     python3 -I "$REPO/tools/restore-settings.py" "$BACKUP"
     rm -rf "$BACKUP"

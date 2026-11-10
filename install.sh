@@ -56,16 +56,8 @@ if [[ ! -d "$BACKUP" ]]; then
     for dir in /org/gnome/shell/extensions/blur-my-shell/ /org/gnome/shell/extensions/dash-to-dock/; do
         dconf dump "$dir" > "$BACKUP.tmp/$(basename "$dir").dconf"
     done
-    key=/org/gnome/desktop/wm/preferences/button-layout
-    value="$(dconf read "$key")"
-    {
-        echo '# Valore originale dei pulsanti (letto da tools/restore-settings.py).'
-        if [[ -z "$value" ]]; then
-            printf 'dconf reset %q\n' "$key"
-        else
-            printf 'dconf write %q %q\n' "$key" "$value"
-        fi
-    } > "$BACKUP.tmp/restore.sh"
+    # Valore così come lo dà dconf (vuoto = predefinito di GNOME)
+    dconf read /org/gnome/desktop/wm/preferences/button-layout > "$BACKUP.tmp/button-layout"
     dconf read /org/gnome/shell/disable-user-extensions > "$BACKUP.tmp/disable-user-extensions"
     mv "$BACKUP.tmp" "$BACKUP"
 else

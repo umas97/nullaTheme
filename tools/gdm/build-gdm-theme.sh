@@ -98,4 +98,11 @@ for res in "$PREFIX/gdm.css" "$PREFIX/nulla-login.jpg"; do
     gresource list "$OUT/gnome-shell-theme.gresource" | grep -qx "$res" \
         || { warn "Resource missing from the compiled theme: %s" "$res"; exit 1; }
 done
+# Da cosa è stato costruito: l'estensione lo confronta col sistema e avvisa
+# quando un aggiornamento di Yaru o di GNOME Shell lo rende vecchio.
+{
+    echo "yaru=$(stat -c '%s:%Y' "$YARU")"
+    echo "shell=$(gnome-shell --version | awk '{print $NF}')"
+} > "$OUT/build-info"
+
 say "Ready: %s" "$OUT/gnome-shell-theme.gresource"

@@ -6,7 +6,8 @@ Uso: python3 -I tools/restore-settings.py <cartella-backup>
 Si rimettono solo le chiavi che Nulla cambia, e solo se hanno ancora il valore
 messo da Nulla: le modifiche fatte dall'utente dopo l'installazione (sfocatura,
 dock, pulsanti, chiaro/scuro) restano com'erano. Legge anche i backup delle
-versioni precedenti (restore.sh con reset completo e color-scheme).
+versioni precedenti (restore.sh con reset completo e color-scheme, che qui
+si legge soltanto per il valore dei pulsanti).
 """
 import configparser
 import os
@@ -73,7 +74,12 @@ def restore_key(path, saved, nulla_value):
 
 
 def saved_buttons(backup):
-    """Valore originale di button-layout, dal restore.sh generato da install.sh."""
+    """Valore originale di button-layout: (trovato, valore o None = predefinito)."""
+    saved = os.path.join(backup, 'button-layout')
+    if os.path.exists(saved):
+        value = open(saved).read().strip()
+        return True, value or None
+    # Backup delle versioni precedenti
     script = os.path.join(backup, 'restore.sh')
     if not os.path.exists(script):
         return False, None

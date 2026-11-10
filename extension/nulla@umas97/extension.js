@@ -27,6 +27,7 @@ import {ToggleEditor} from './toggleEditor.js';
 import {PanelLayout} from './panelLayout.js';
 import {DesktopClock} from './desktopClock.js';
 import {LockScreen} from './lockScreen.js';
+import {checkGdmTheme} from './gdmCheck.js';
 
 const STYLE_CLASS = 'nulla';
 const BLUR_UUID = 'blur-my-shell@aunetx';
@@ -149,6 +150,7 @@ export default class NullaExtension extends Extension {
         this._appWatches = new Map();
         this._closeRetries = new Map(); // app → tentativi dopo la chiusura
         this._sliderWaits = 0;
+        checkGdmTheme(this._appsCancellable);
         this._syncVscode();
         // A ogni accesso, perché Chrome Sync può rimettere il tema dell'account.
         this._runApps('chrome');

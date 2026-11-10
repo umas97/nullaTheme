@@ -8,7 +8,8 @@
 # Il tema di Ubuntu non viene toccato: Nulla si aggiunge come alternativa
 # (update-alternatives) con priorità più alta. Rimozione: uninstall-gdm.sh.
 #
-# Da rilanciare se cambi sfondo/accento o dopo un aggiornamento di Yaru.
+# Da rilanciare se cambi sfondo/accento o dopo un aggiornamento di Yaru o di
+# GNOME Shell (l'estensione lo segnala con una notifica).
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -27,6 +28,7 @@ fi
 
 say "Installing the theme (needs the administrator password)"
 sudo install -D -m 644 "$BUILD/gnome-shell-theme.gresource" "$DEST"
+sudo install -m 644 "$BUILD/build-info" "$(dirname "$DEST")/build-info"
 sudo update-alternatives --install "$LINK" "$NAME" "$DEST" 50
 sudo update-alternatives --set "$NAME" "$DEST"
 

@@ -9,23 +9,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Translators: short date under the clock, strftime format (e.g. "Fri, Nov 6")
-#: extension/nulla@umas97/clockFace.js:41
+#: extension/nulla@umas97/clockFace.js:42
 msgid "%a, %b %e"
 msgstr "%a %e %b"
 
 #. Translators: day and month without weekday, strftime format (e.g. "November 6")
-#: extension/nulla@umas97/clockFace.js:44
+#: extension/nulla@umas97/clockFace.js:45
 msgid "%B %e"
 msgstr "%e %B"
 
 #. Translators: long date under the clock, strftime format (e.g. "Friday, November 6")
-#: extension/nulla@umas97/clockFace.js:47
+#: extension/nulla@umas97/clockFace.js:48
 msgid "%A, %B %e"
 msgstr "%A %e %B"
 
-#: extension/nulla@umas97/extension.js:44 extension/nulla@umas97/extension.js:50
+#: extension/nulla@umas97/extension.js:54 extension/nulla@umas97/extension.js:60
 msgid "Transparency"
 msgstr "Trasparenza"
+
+#: extension/nulla@umas97/gdmCheck.js:57
+msgid "Login screen theme out of date"
+msgstr "Tema della schermata di accesso da aggiornare"
+
+#: extension/nulla@umas97/gdmCheck.js:59
+msgid "Ubuntu updated GNOME Shell or its theme. To keep the login screen working, run tools/gdm/install-gdm.sh again from the Nulla folder (or tools/gdm/uninstall-gdm.sh to go back to Ubuntu's)."
+msgstr "Ubuntu ha aggiornato GNOME Shell o il suo tema. Perché la schermata di accesso continui a funzionare, rilancia tools/gdm/install-gdm.sh dalla cartella di Nulla (oppure tools/gdm/uninstall-gdm.sh per tornare a quella di Ubuntu)."
 
 #: extension/nulla@umas97/prefs.js:9
 msgid "Top left"
@@ -335,88 +343,88 @@ msgstr "Allinea Blur my Shell"
 msgid "Use the same corner radii for the blur"
 msgstr "Usa gli stessi raggi degli angoli per la sfocatura"
 
-#: extension/nulla@umas97/toggleEditor.js:232
+#: extension/nulla@umas97/toggleEditor.js:239
 msgid "Tap to hide · drag to reorder"
 msgstr "Tocca per nascondere · trascina per riordinare"
 
-#: extension/nulla@umas97/toggleEditor.js:242 extension/nulla@umas97/toggleEditor.js:262
+#: extension/nulla@umas97/toggleEditor.js:249 extension/nulla@umas97/toggleEditor.js:276
 msgid "Edit toggles"
 msgstr "Modifica i toggle"
 
-#: extension/nulla@umas97/toggleEditor.js:262
+#: extension/nulla@umas97/toggleEditor.js:276
 msgid "Done"
 msgstr "Fine"
 
-#: extension/nulla@umas97/toggleEditor.js:268
+#: extension/nulla@umas97/toggleEditor.js:282
 msgid "Hidden · tap to add"
 msgstr "Nascosti · tocca per aggiungere"
 
-#: install.sh:25 tools/gdm/build-gdm-theme.sh:19
+#: install.sh:28 tools/gdm/build-gdm-theme.sh:19
 #, c-format
 msgid "Missing command: %s"
 msgstr "Comando mancante: %s"
 
-#: install.sh:40
+#: install.sh:43
 #, c-format
 msgid "Skipped: %s (schema or key missing)"
 msgstr "Saltato: %s (schema o chiave assente)"
 
-#: install.sh:46
+#: install.sh:53
 #, c-format
 msgid "Backing up the original settings to %s"
 msgstr "Backup delle impostazioni originali in %s"
 
-#: install.sh:72
+#: install.sh:64
 #, c-format
 msgid "Original backup already present, keeping it (%s)"
 msgstr "Backup originale già presente: lo conservo (%s)"
 
-#: install.sh:77
+#: install.sh:69
 #, c-format
 msgid "Copying the extension to %s"
 msgstr "Copio l'estensione in %s"
 
-#: install.sh:86
+#: install.sh:78
 msgid "Linking the theme to GTK 3 and GTK 4 apps"
 msgstr "Collego il tema alle app GTK3 e GTK4"
 
-#: install.sh:101
+#: install.sh:95
 msgid "Setting macOS-style window buttons on the right (− + ×)"
 msgstr "Imposto i pulsanti finestra stile macOS a destra (− + ×)"
 
-#: install.sh:106
+#: install.sh:100
 msgid "Blur my Shell: blur on, tint handled by Nulla"
 msgstr "Blur my Shell: sfocatura attiva, tinta gestita da Nulla"
 
-#: install.sh:112
+#: install.sh:106
 msgid "Blur my Shell not found: no blur (the theme works anyway)"
 msgstr "Blur my Shell non trovata: niente sfocatura (il tema funziona comunque)"
 
-#: install.sh:116
+#: install.sh:110
 msgid "Dock: transparency handled by the theme"
 msgstr "Dock: trasparenza gestita dal tema"
 
-#: install.sh:123
+#: install.sh:117
 msgid "Enabling the extension and turning off the dock (apps move to the top bar)"
 msgstr "Attivo l'estensione e disattivo la dock (le app passano nella barra superiore)"
 
-#: install.sh:158
+#: install.sh:159
 msgid "Done."
 msgstr "Fatto."
 
-#: install.sh:159
+#: install.sh:160
 msgid "• Log out and back in to activate the shell theme and the slider."
 msgstr "• Esci e rientra (logout/login) per attivare il tema della shell e lo slider."
 
-#: install.sh:160
+#: install.sh:161
 msgid "• GTK apps that are already open must be reopened."
 msgstr "• Le app GTK già aperte vanno riaperte."
 
-#: install.sh:161
+#: install.sh:162
 msgid "• Accent and light/dark: Settings → Appearance.  Transparency: Quick Settings (top right)."
 msgstr "• Accento e chiaro/scuro: Impostazioni → Aspetto.  Trasparenza: impostazioni rapide (in alto a destra)."
 
-#: install.sh:162
+#: install.sh:163
 msgid "• Uninstall: ./uninstall.sh"
 msgstr "• Disinstallazione: ./uninstall.sh"
 
@@ -466,32 +474,32 @@ msgstr "Compilo il tema"
 msgid "Resource missing from the compiled theme: %s"
 msgstr "Risorsa mancante nel tema compilato: %s"
 
-#: tools/gdm/build-gdm-theme.sh:101
+#: tools/gdm/build-gdm-theme.sh:108
 #, c-format
 msgid "Ready: %s"
 msgstr "Pronto: %s"
 
-#: tools/gdm/install-gdm.sh:22
+#: tools/gdm/install-gdm.sh:23
 msgid "Run it as your normal user (without sudo): it needs to read your wallpaper and accent."
 msgstr "Lancialo come utente normale (senza sudo): serve leggere sfondo e accento."
 
-#: tools/gdm/install-gdm.sh:28
+#: tools/gdm/install-gdm.sh:29
 msgid "Installing the theme (needs the administrator password)"
 msgstr "Installo il tema (richiede la password di amministratore)"
 
-#: tools/gdm/install-gdm.sh:34
+#: tools/gdm/install-gdm.sh:36
 msgid "Done. The new login screen appears at the next logout or reboot."
 msgstr "Fatto. La nuova schermata di accesso si vede al prossimo logout o riavvio."
 
-#: tools/gdm/install-gdm.sh:35
+#: tools/gdm/install-gdm.sh:37
 msgid "• To go back to Ubuntu's: tools/gdm/uninstall-gdm.sh"
 msgstr "• Per tornare a quella di Ubuntu: tools/gdm/uninstall-gdm.sh"
 
-#: tools/gdm/install-gdm.sh:36
+#: tools/gdm/install-gdm.sh:38
 msgid "• If something goes wrong and you can't log in: Ctrl+Alt+F3,"
 msgstr "• Se qualcosa andasse storto e non riuscissi ad accedere: Ctrl+Alt+F3,"
 
-#: tools/gdm/install-gdm.sh:37
+#: tools/gdm/install-gdm.sh:39
 #, c-format
 msgid "  log in from the console and run: sudo update-alternatives --auto %s"
 msgstr "  accedi dal terminale e lancia: sudo update-alternatives --auto %s"
@@ -500,35 +508,39 @@ msgstr "  accedi dal terminale e lancia: sudo update-alternatives --auto %s"
 msgid "Done: Ubuntu's login screen is back (visible at the next logout)."
 msgstr "Fatto: schermata di accesso di Ubuntu ripristinata (visibile al prossimo logout)."
 
-#: uninstall.sh:12
+#: uninstall.sh:15
 msgid "Disabling the extension and turning the dock back on"
 msgstr "Disattivo l'estensione e riattivo la dock"
 
-#: uninstall.sh:32
+#: uninstall.sh:43
 msgid "Removing files"
 msgstr "Rimuovo i file"
 
-#: uninstall.sh:46
+#: uninstall.sh:57
 msgid "VS Code and Chrome: restoring the previous settings"
 msgstr "VS Code e Chrome: rimetto le impostazioni di prima"
 
-#: uninstall.sh:52
+#: uninstall.sh:64
 msgid "Chrome is open: close it and run ./uninstall.sh again to restore its previous theme"
 msgstr "Chrome è aperto: chiudilo e rilancia ./uninstall.sh per rimettere il tema di prima"
 
-#: uninstall.sh:53
+#: uninstall.sh:66
+msgid "VS Code was saving its settings: run ./uninstall.sh again"
+msgstr "VS Code stava salvando le sue impostazioni: rilancia ./uninstall.sh"
+
+#: uninstall.sh:68
 #, c-format
 msgid "%s: settings left unchanged (unreadable file), fix them by hand"
 msgstr "%s: impostazioni non modificate (file illeggibile), da sistemare a mano"
 
-#: uninstall.sh:58
-msgid "Restoring the original settings (dock, Blur my Shell, buttons, color scheme)"
-msgstr "Ripristino le impostazioni originali (dock, Blur my Shell, pulsanti, schema colori)"
+#: uninstall.sh:73
+msgid "Restoring the settings Nulla changed (dock, Blur my Shell, buttons)"
+msgstr "Ripristino le impostazioni cambiate da Nulla (dock, Blur my Shell, pulsanti)"
 
-#: uninstall.sh:63
+#: uninstall.sh:78
 msgid "No backup found: dock and Blur my Shell settings left as they are"
 msgstr "Nessun backup trovato: impostazioni di dock e Blur my Shell lasciate come sono"
 
-#: uninstall.sh:66
+#: uninstall.sh:81
 msgid "Done. Log out and back in to fully return to the previous theme."
 msgstr "Fatto. Esci e rientra per tornare completamente al tema di prima."
